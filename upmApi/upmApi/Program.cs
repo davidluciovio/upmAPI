@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using upmData.Context;
+using upmDomain.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,12 +31,37 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true, // Validar la firma
         ValidIssuer = issuer,
         ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
         // Permite un pequeño margen de tiempo (Clock Skew) por si los relojes no están perfectamente sincronizados
         ClockSkew = TimeSpan.Zero // O un valor pequeño como TimeSpan.FromMinutes(1)
     };
 });
+
+builder.Services.AddDbContext<UpmwebContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// *** IMPORTANTE: Configura CORS para permitir peticiones desde tu app Angular ***
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", // Un nombre de política unificado
+       policyBuilder =>
+       {
+           policyBuilder.WithOrigins(
+                "http://localhost:4200",    // Angular dev
+                "http://localhost:80",      // Otro local
+                "http://upmap04:8002",     // Angular desplegado en upmap04
+                "http://www.uniprestst.com",    // Angular desplegado en UPMTEST
+                "http://www.unipresweb.com/"     // Angular desplegado en UPMTEST
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+       });
+
+});
+
 // Add services to the container.
+builder.Services.AddScoped<AuthService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -46,9 +75,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowSpecificOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHttpsRedirection();
 
 app.MapControllers();
 

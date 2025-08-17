@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("upmApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce87d2237b1f483a2fa526a3d4bc731637ccf441")]
 [assembly: System.Reflection.AssemblyProductAttribute("upmApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("upmApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "upmData", "upmData\upmData.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "upmDomain", "upmDomain\upmDomain.csproj", "{19B2F2B1-95D1-4CC1-9289-D81D6AAACFBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "upmApi", "upmApi\upmApi.csproj", "{41C7A81C-50F9-466C-A097-6502F259D17E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{19B2F2B1-95D1-4CC1-9289-D81D6AAACFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19B2F2B1-95D1-4CC1-9289-D81D6AAACFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19B2F2B1-95D1-4CC1-9289-D81D6AAACFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41C7A81C-50F9-466C-A097-6502F259D17E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41C7A81C-50F9-466C-A097-6502F259D17E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41C7A81C-50F9-466C-A097-6502F259D17E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41C7A81C-50F9-466C-A097-6502F259D17E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
