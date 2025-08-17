@@ -1,0 +1,6 @@
+@upmApi_HostAddress = http://localhost:5023
+
+GET {{upmApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

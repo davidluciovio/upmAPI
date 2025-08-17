@@ -1,0 +1,14 @@
+C:\UPM\upmApi\upmData\bin\Debug\net9.0\upmData.deps.json
+C:\UPM\upmApi\upmData\bin\Debug\net9.0\upmData.dll
+C:\UPM\upmApi\upmData\bin\Debug\net9.0\upmData.pdb
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.GeneratedMSBuildEditorConfig.editorconfig
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.AssemblyInfoInputs.cache
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.AssemblyInfo.cs
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.csproj.CoreCompileInputs.cache
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.dll
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\refint\upmData.dll
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.pdb
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\ref\upmData.dll
+C:\UPM\upmApi\upmData\bin\Debug\net9.0\upmData.runtimeconfig.json
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.genruntimeconfig.cache
+C:\UPM\upmApi\upmData\obj\Debug\net9.0\upmData.csproj.AssemblyReference.cache
