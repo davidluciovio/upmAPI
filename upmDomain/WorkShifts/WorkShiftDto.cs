@@ -5,14 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using upmData.Models;
 
-namespace upmDomain.Shift
+namespace upmDomain.WorkShifts
 {
-    public class ShiftDto
+    public class WorkShiftDto
     {
         public Guid WorkShiftId { get; set; }
+        public DateTime ReferenceDate { get; set; }
+        public string Description { get; set; } = null!;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public DateTime ReferenceDate { get; set; }
-        public WorkShift? ShiftDetails { get; set; }
+        public int SecondsQuantity { get; set; }
     }
 }

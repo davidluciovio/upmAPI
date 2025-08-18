@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using upmData.Context;
 using upmDomain.Auth;
+using upmDomain.DomainModel;
 using upmDomain.Lider;
 using upmDomain.LineDomain;
 using upmDomain.ProductionReport;
@@ -68,7 +69,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LiderService>();
-builder.Services.AddScoped<ShiftService>();
+builder.Services.AddScoped<ModelService>();
+builder.Services.AddScoped<WorkShiftService>();
 builder.Services.AddScoped<ProductionReportService>();
 builder.Services.AddScoped<LineService>();
 

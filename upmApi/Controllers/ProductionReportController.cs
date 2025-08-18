@@ -15,11 +15,11 @@ namespace upmApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetProductionReportsAsync([FromQuery] DateTime startDatetime, [FromQuery] DateTime endDatetime, [FromQuery] Guid lineId, [FromQuery] int modelId)
         {
             try
             {
-                var response = await _productionReportService.GetAllAsync();
+                var response = await _productionReportService.GetProductionReportsAsync(startDatetime.ToLocalTime(), endDatetime.ToLocalTime(), lineId, modelId);
                 return Ok(response);
             }
             catch (Exception ex)
