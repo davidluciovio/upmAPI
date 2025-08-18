@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using upmData.Context;
 using upmDomain.Auth;
+using upmDomain.Lider;
+using upmDomain.LineDomain;
+using upmDomain.ProductionReport;
+using upmDomain.Shift;
+using upmDomain.UserTools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +66,11 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<LiderService>();
+builder.Services.AddScoped<ShiftService>();
+builder.Services.AddScoped<ProductionReportService>();
+builder.Services.AddScoped<LineService>();
 
 
 builder.Services.AddControllers();

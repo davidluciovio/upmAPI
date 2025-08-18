@@ -29,7 +29,6 @@ namespace upmDomain.Auth
             var user = ValidateCredentials(userCode, password);
             if (user == null ) return null!;
 
-            // Crear claims (datos que viajarán en el token)
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -46,8 +45,6 @@ namespace upmDomain.Auth
                 claims.Add(new Claim(ClaimTypes.Role, role.Description));
             }
 
-            // Llave secreta del appsettings.json
-
             if (string.IsNullOrEmpty(_configuration["Jwt:Issuer"]) || string.IsNullOrEmpty(_configuration["Jwt:Audience"]))
             {
                 throw new Exception("Configuración JWT incompleta en el servidor.");
@@ -56,7 +53,6 @@ namespace upmDomain.Auth
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // Crear token
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
@@ -83,6 +79,8 @@ namespace upmDomain.Auth
                 .Select(uc => uc.Role)
                 .ToListAsync();
         }
+
+      
 
     }
 }
