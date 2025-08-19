@@ -35,20 +35,31 @@ namespace upmDomain.ProductionReport
 
         public async Task<List<ProductionReportDto>> GetProductionReportsAsync(DateTime startDatetime, DateTime endDatetime, Guid lineId, int modelId)
         {
-            // 1. OBTENER LOS IDs DE CONFIGURACIÓN RELEVANTES
-            // Consulta base que usaremos en los demás queries. No se ejecuta aún.
+            // 1. OBTENER IDs DE CONFIGURACIÓN RELEVANTES (Sin cambios)
             var partNumberConfigIdsQuery = _context.PartNumberConfigurations
                 .Where(pc => pc.Active && pc.LineId == lineId && pc.ModelId == modelId)
                 .Select(pc => pc.Id);
 
-            // 2. OBTENER TODOS LOS DATOS DE PRODUCCIÓN AGRUPADOS DE UNA SOLA VEZ
-            // La base de datos hará el Where, GroupBy y Sum, y nos devolverá solo el agregado.
+            // 1.5. GENERAR LISTA COMPLETA DE HORAS PARA EL RANGO
+            var allHoursInRange = new List<DateTime>();
+            // Truncamos la fecha de inicio a la hora en punto para un bucle limpio
+            var currentHour = new DateTime(startDatetime.Year, startDatetime.Month, startDatetime.Day, startDatetime.Hour, 0, 0);
+            while (currentHour < endDatetime)
+            {
+                allHoursInRange.Add(currentHour);
+                currentHour = currentHour.AddHours(1);
+            }
+
+            // 2. OBTENER DATOS DE PRODUCCIÓN AGRUPADOS (Sin cambios, ya estaba bien)
             var hourlyProductionData = await _context.ProductionRegisters
                 .Where(pr => pr.Active &&
                              pr.CreateDate >= startDatetime &&
                              pr.CreateDate < endDatetime &&
                              partNumberConfigIdsQuery.Contains(pr.PartNumberConfigurationId))
-                .GroupBy(pr => new { Hour = new DateTime(pr.CreateDate.Year, pr.CreateDate.Month, pr.CreateDate.Day, pr.CreateDate.Hour, 0, 0), pr.PartNumberConfigurationId })
+                .GroupBy(pr => new {
+                    Hour = new DateTime(pr.CreateDate.Year, pr.CreateDate.Month, pr.CreateDate.Day, pr.CreateDate.Hour, 0, 0),
+                    pr.PartNumberConfigurationId
+                })
                 .Select(g => new
                 {
                     g.Key.Hour,
@@ -57,14 +68,19 @@ namespace upmDomain.ProductionReport
                 })
                 .ToListAsync();
 
-            // 3. OBTENER TODOS LOS DATOS DE PAROS AGRUPADOS DE UNA SOLA VEZ
+            // 3. OBTENER DATOS DE PAROS AGRUPADOS (Ajuste en la clave de agrupación)
             var hourlyDowntimeData = await _context.DowntimeRegisters
                 .Where(dr => dr.Active &&
                              dr.StartTime >= startDatetime &&
                              dr.EndTime < endDatetime &&
                              dr.EndTime != null &&
                              partNumberConfigIdsQuery.Contains(dr.PartNumberConfigurationId))
-                .GroupBy(dr => new { dr.CreateDate.Hour, dr.PartNumberConfigurationId, dr.DowntimeId })
+                .GroupBy(dr => new {
+                    // Usamos el mismo método de truncado que en producción para consistencia
+                    Hour = new DateTime(dr.CreateDate.Year, dr.CreateDate.Month, dr.CreateDate.Day, dr.CreateDate.Hour, 0, 0),
+                    dr.PartNumberConfigurationId,
+                    dr.DowntimeId
+                })
                 .Select(g => new
                 {
                     g.Key.Hour,
@@ -74,25 +90,26 @@ namespace upmDomain.ProductionReport
                 })
                 .ToListAsync();
 
-            // 4. OBTENER LOS NOMBRES/DETALLES DE LOS PAROS NECESARIOS (EVITANDO .Find())
-            // Obtenemos los IDs únicos de los paros que encontramos y los buscamos todos a la vez.
+            // 4. OBTENER DETALLES DE LOS PAROS (Sin cambios)
             var downtimeIds = hourlyDowntimeData.Select(d => d.DowntimeId).Distinct();
             var downtimesDictionary = await _context.Downtimes
                 .Where(d => downtimeIds.Contains(d.Id))
                 .ToDictionaryAsync(d => d.Id, d => DowntimeMapper.Map(d));
 
-            // 5. OBTENER LA ESTRUCTURA PRINCIPAL DEL REPORTE
+            // 5. OBTENER LA ESTRUCTURA PRINCIPAL DEL REPORTE (Sin cambios)
             var partNumberConfigurations = await _context.PartNumberConfigurations
-                .Include(pc => pc.PartNumber) // Incluir datos relacionados para evitar más queries
+                .Include(pc => pc.PartNumber)
                 .Where(pc => pc.Active && pc.LineId == lineId && pc.ModelId == modelId)
                 .ToListAsync();
 
-            // 6. ENSAMBLAR EL REPORTE FINAL EN MEMORIA (¡SÚPER RÁPIDO!)
+            // 6. ENSAMBLAR EL REPORTE FINAL (LÓGICA PRINCIPAL MODIFICADA)
 
-            // Creamos un "lookup" para acceder a los paros de forma eficiente
-            var downtimesLookup = hourlyDowntimeData.ToLookup(
-                key => (key.Hour, key.PartNumberConfigurationId),
-                val => val);
+            // Convertimos los datos en diccionarios para búsquedas O(1) súper rápidas
+            var productionLookup = hourlyProductionData
+                .ToDictionary(p => (p.PartNumberConfigurationId, p.Hour), p => p.TotalProduction);
+
+            var downtimesLookup = hourlyDowntimeData
+                .ToLookup(d => (d.PartNumberConfigurationId, d.Hour), d => d);
 
             var finalReport = new List<ProductionReportDto>();
 
@@ -103,22 +120,27 @@ namespace upmDomain.ProductionReport
                     EndDatetime = endDatetime,
                     StartDatetime = startDatetime,
                     PartNumber = PartNumberMapper.Map(pc.PartNumber),
-                    TimeProductions = hourlyProductionData
-                        .Where(prod => prod.PartNumberConfigurationId == pc.Id)
-                        .Select(prodGroup => new TimeProduction
+                    // Iteramos sobre nuestra lista completa de horas, no sobre los datos de producción
+                    TimeProductions = allHoursInRange.Select(hour =>
+                    {
+                        // Buscamos la producción para esta hora. Si no existe, es 0.
+                        productionLookup.TryGetValue((pc.Id, hour), out int totalProduction);
+
+                        // Buscamos los paros para esta hora. El lookup devolverá una lista vacía si no hay.
+                        var downtimesForHour = downtimesLookup[(pc.Id, hour)];
+
+                        return new TimeProduction
                         {
-                            Time = prodGroup.Hour,
-                            Production = prodGroup.TotalProduction,
-                            Downtimes = downtimesLookup[(prodGroup.Hour.Hour, pc.Id)]
-                                .Select(downtimeGroup => new TimeDowntime
-                                {
-                                    Minutes = TimeSpan.FromMinutes(downtimeGroup.TotalMinutes),
-                                    // Buscamos en nuestro diccionario en memoria, no en la BD
-                                    Downtime = downtimesDictionary.GetValueOrDefault(downtimeGroup.DowntimeId)
-                                })
-                                .ToList()
-                        })
-                        .ToList()
+                            Time = hour,
+                            Production = totalProduction, // Asignamos el valor encontrado o 0
+                            Downtimes = downtimesForHour.Select(downtimeGroup => new TimeDowntime
+                            {
+                                Minutes = TimeSpan.FromMinutes(downtimeGroup.TotalMinutes),
+                                Downtime = downtimesDictionary.GetValueOrDefault(downtimeGroup.DowntimeId)
+                            }).ToList(),
+                            Plan = (60 - downtimesForHour.Sum(downtimeGroup => downtimeGroup.TotalMinutes)) / pc.PartNumber.NetoTime
+                        };
+                    }).ToList()
                 };
                 finalReport.Add(reportDto);
             }

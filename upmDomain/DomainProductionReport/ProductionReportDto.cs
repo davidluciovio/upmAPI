@@ -19,7 +19,7 @@ namespace upmDomain.ProductionReport
     {
         public DateTime Time { get; set; }
         public int Production { get; set; }
-        public int Plan { get; set; }
+        public float Plan { get; set; }
         public float Efectivity
         {
             get
