@@ -14,11 +14,11 @@ namespace upmApi.Controllers
             _modelService = modelService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] List<Guid> lineIds)
+        public async Task<IActionResult> GetAllAsync([FromQuery] List<Guid> lineIds, [FromQuery] List<Guid> liderIds)
         {
             try
             {
-                var response = await _modelService.GetAllAsync(lineIds);
+                var response = await _modelService.GetAllAsync(lineIds, liderIds);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -9,6 +9,7 @@ using upmData.Context;
 using upmDomain.DomainDowntime;
 using upmDomain.DomainPartNumber;
 using upmDomain.DomainPartNumberConfiguration;
+using upmDomain.DomainProductionReport;
 using upmDomain.Interfaces;
 using upmDomain.Lider;
 using upmDomain.LineDomain;
@@ -146,6 +147,26 @@ namespace upmDomain.ProductionReport
             }
 
             return finalReport;
+        }
+
+        public async Task<List<ProductionReportListDto>> GetProductionReportListAsync(List<Guid> liderIds, List<Guid> lineIds, List<int> modelIds, List<Guid> shiftIds, List<DateTime> dates)
+        {
+            var listProductionReport = new List<ProductionReportListDto>();
+
+
+            var maxDate = dates.Max();
+            var minDate = dates.Min();
+
+            var productionRegisters = _context.ProductionRegisters
+                .Where(pr => 
+                pr.CreateDate >= minDate &&
+                pr.CreateDate < maxDate)
+                .GroupBy(pr => new
+                {
+                    pr.PartNumberConfiguration
+                });
+
+            return listProductionReport;
         }
     }
 }

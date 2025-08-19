@@ -30,6 +30,19 @@ namespace upmDomain.DomainModel
                 .ToListAsync();
         }
 
+        public async Task<List<ModelDto>> GetAllAsync(List<Guid> linesIds, List<Guid> liderIds)
+        {
+            return await _context.LiderConfigurations
+                .Where(lc => liderIds.Contains(lc.UserId) && linesIds.Contains(lc.PartNumberConfiguration.LineId))
+                .Select(lc => new ModelDto
+                {
+                    ModelDescription = lc.PartNumberConfiguration.Model.Name,
+                    ModelId = lc.PartNumberConfiguration.ModelId
+                })
+                .Distinct()
+                .ToListAsync();
+        }
+
         public Task<List<ModelDto>> GetAllAsync()
         {
             throw new NotImplementedException();

@@ -20,6 +20,8 @@ namespace upmDomain.ProductionReport
         public DateTime Time { get; set; }
         public int Production { get; set; }
         public float Plan { get; set; }
+        public TimeSpan startTime { get; set; }
+        public TimeSpan endTime { get; set; }
         public float Efectivity
         {
             get
