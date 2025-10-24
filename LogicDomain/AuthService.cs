@@ -20,11 +20,11 @@ namespace LogicDomain
     {
         private readonly AuthContext _authContext;
         private readonly IConfiguration _configuration;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<AuthUser> _userManager;
+        private readonly RoleManager<AuthRole> _roleManager;
 
 
-        public AuthService(AuthContext authContext, IConfiguration configuration, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(AuthContext authContext, IConfiguration configuration, UserManager<AuthUser> userManager, RoleManager<AuthRole> roleManager)
         {
             _authContext = authContext;
             _configuration = configuration;
@@ -73,7 +73,7 @@ namespace LogicDomain
             var authClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             };
 
             // 2. Obtener roles del usuario (ej. ["Vendedor", "Contador"])
@@ -84,7 +84,7 @@ namespace LogicDomain
 
                 // 3. ¡LA MAGIA! Obtener los permisos (claims) de CADA rol
                 var role = await _roleManager.FindByNameAsync(roleName);
-                var roleClaims = await _roleManager.GetClaimsAsync(role);
+                var roleClaims = await _roleManager.GetClaimsAsync(role!);
 
                 // Agregamos solo los claims que sean de tipo "Permiso"
                 var permisosClaims = roleClaims.Where(c => c.Type == "Permiso");
