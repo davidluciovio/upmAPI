@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LogicData.ContextAuth
+namespace LogicData.Context
 {
     public class AuthContext : IdentityDbContext<AuthUser, AuthRole, string>
     {

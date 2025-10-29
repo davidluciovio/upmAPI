@@ -1,6 +1,6 @@
 ﻿using Entity.Dtos;
 using Entity.Models;
-using LogicData.ContextAuth;
+using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

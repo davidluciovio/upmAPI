@@ -1,5 +1,5 @@
 ﻿using Entity.Models;
-using LogicData.ContextAuth;
+using LogicData.Context;
 using LogicDomain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +31,20 @@ builder.Services.AddDbContext<AuthContext>(options =>
     {
         // Le decimos que guarde sus migraciones en una tabla con sufijo
         sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_Authentication");
+    }));
+
+builder.Services.AddDbContext<ProductionControlContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        // Le decimos que guarde sus migraciones en una tabla con sufijo
+        sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_ProductionControl");
+    }));
+
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        // Le decimos que guarde sus migraciones en una tabla con sufijo
+        sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_Data");
     }));
 
 //***************************************************************************************************
