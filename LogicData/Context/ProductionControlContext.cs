@@ -15,47 +15,32 @@ namespace LogicData.Context
         {
         }
 
-        public DbSet<ProductionControlStatus> statuses { get; set; }
         public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.HasDefaultSchema("upm_pc");
             base.OnModelCreating(builder);
 
-            builder.Entity<ProductionControlStatus>(entity =>
-            {
-                entity.ToTable("Status");
-                entity.HasKey(e => e.Id);
+            builder.Ignore<DataProductionModel>();
+            builder.Ignore<DataProductionLocation>();
+            builder.Ignore<DataProductionPartNumber>();
 
-                entity.HasIndex(e => e.StatusDescription).IsUnique();
-
-                entity.Property(e => e.StatusDescription).IsRequired().HasMaxLength(100);
-            });
-
-            builder.Entity<DataProductionPartNumber>()
-                .ToTable("ProductionPartNumber", t => t.ExcludeFromMigrations());
+            builder.Entity<ProductionControlComponentAlert>()
+                .HasOne<DataProductionPartNumber>()
+                .WithMany()
+                .HasForeignKey(e => e.ProductionPartNumberId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ProductionControlComponentAlert>(entity =>
             {
                 entity.ToTable("ComponentAlert");
                 entity.HasKey(e => e.Id);
 
-                entity.HasOne(e => e.Status)
-                    .WithMany(e => e.ComponentsAlerts)
-                    .HasForeignKey(e => e.StatusId);
-                entity.HasOne(e => e.ProductionPartNumber)
-                    .WithMany(e => e.ComponentsAlerts)
-                    .HasForeignKey(e => e.ProductionPartNumberId);
             });
 
-            builder.Entity<ProductionControlArea>(entity =>
-            {
-                entity.ToTable("Area");
-                entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.AreaName).IsUnique();
-                entity.Property(e => e.AreaName).IsRequired().HasMaxLength(100);
-            });
-        }   
+        }
+            
     }
 }

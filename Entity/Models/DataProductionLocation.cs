@@ -13,7 +13,7 @@ namespace Entity.Models
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
 
-        public string ProductionLocationName { get; set; } = string.Empty;
+        public string LocationDescription { get; set; } = string.Empty;
 
         public ICollection<DataProductionPartNumber> ProductionPartNumbers { get; set; } = new List<DataProductionPartNumber>();
 

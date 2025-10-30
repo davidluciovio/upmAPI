@@ -13,8 +13,8 @@ namespace Entity.Models
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
 
-        public string ProductionPartNumberName { get; set; } = string.Empty;
-        public string ProductionPartNumberDescription { get; set; } = string.Empty;
+        public string PartNumberName { get; set; } = string.Empty;
+        public string PartNumberDescription { get; set; } = string.Empty;
         public string SNP { get; set; } = string.Empty;
 
         public virtual DataProductionModel? DataProductionModel { get; set; }
@@ -22,7 +22,6 @@ namespace Entity.Models
         public virtual DataProductionLocation? DataProductionLocation { get; set; }
         public Guid ProductionLocationId { get; set; }
 
-        public ICollection<ProductionControlComponentAlert> ComponentsAlerts { get; set; } = new List<ProductionControlComponentAlert>();
 
     }
 }

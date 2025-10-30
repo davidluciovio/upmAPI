@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class ProductionControlStatus
+    public class DataWorkShift
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
         public required DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
 
-        public string StatusDescription { get; set; } = string.Empty;
-
-        public ICollection<ProductionControlComponentAlert> ComponentsAlerts { get; set; } = new List<ProductionControlComponentAlert>();
+        public string ShiftDescription { get; set; } = string.Empty;
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public int SecondsQuantity { get; set; }
     }
 }

@@ -23,9 +23,7 @@ namespace Entity.Models
         public DateTime? ReceivedDate { get; set; }
         public DateTime? CancelDate { get; set; }
 
-        public virtual ProductionControlStatus Status { get; set; } = null!;
         public Guid StatusId { get; set; }
-        public virtual DataProductionPartNumber ProductionPartNumber { get; set; } = null!;
         public Guid ProductionPartNumberId { get; set; }
     }
 }

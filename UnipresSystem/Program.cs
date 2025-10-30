@@ -147,6 +147,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<DataProductionModelService>();
 
 //***************************************************************************************************
 //***************************************************************************************************
