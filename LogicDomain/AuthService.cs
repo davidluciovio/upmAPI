@@ -74,6 +74,7 @@ namespace LogicDomain
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+                new Claim(JwtRegisteredClaimNames.Name, user.NormalizedUserName!),
             };
 
             // 2. Obtener roles del usuario (ej. ["Vendedor", "Contador"])
@@ -104,7 +105,7 @@ namespace LogicDomain
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: authClaims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddHours(10),
                 signingCredentials: creds
             );
 
