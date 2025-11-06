@@ -18,12 +18,15 @@ namespace Entity.Models
         public string SNP { get; set; } = string.Empty;
 
         public string? CompleteBy { get; set; }
-        public string? ProcessedBy { get; set; }
-        public DateTime? DeliveryDate { get; set; }
+        public DateTime? CompleteDate { get; set; }
+        public string? ReceivedBy { get; set; }
         public DateTime? ReceivedDate { get; set; }
+        public string? CancelBy { get; set; }
         public DateTime? CancelDate { get; set; }
+        public string? CriticalBy { get; set; }
+        public DateTime? CriticalDate { get; set; }
 
         public Guid StatusId { get; set; }
         public Guid ProductionPartNumberId { get; set; }
-    }
+    } 
 }
