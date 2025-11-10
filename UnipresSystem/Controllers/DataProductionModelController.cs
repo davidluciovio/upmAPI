@@ -67,6 +67,55 @@ namespace UnipresSystem.Controllers
             }
         }
 
+        [HttpPost("v1/desactivate")]
+        public async Task<IActionResult> SetProductionModelDesactivate([FromBody] Guid id)
+        {
+            try
+            {
+                var desactivate = await _dataProductionModelService.DeactivateProductionModel(id);
+                if (!desactivate) throw new Exception($"Error al desactivar el modelo con id: {id}");
+
+                return Ok(desactivate);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ocurrio un error en sistema {ex.Message} - {ex.InnerException?.Message}");
+            }
+        }
+
+        [HttpPost("v1/activate")]
+        public async Task<IActionResult> SetProductionModelActivate([FromBody] Guid id)
+        {
+            try
+            {
+                var activate = await _dataProductionModelService.ActivateProductionModel(id);
+                if (!activate) throw new Exception($"Error al activar el modelo con id: {id}");
+
+                return Ok(activate);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ocurrio un error en sistema {ex.Message} - {ex.InnerException?.Message}");
+            }
+        }
+
+        [HttpPost("v1/update/{id}")]
+        public async Task<IActionResult> SetProductionModelUpdate(Guid id, [FromBody] DataProductionModelDto model)
+        {
+            try
+            {
+                var updatedModel = await _dataProductionModelService.UpdateProductionModel(id, model);
+
+                if (updatedModel == null) throw new Exception($"Error al activar el modelo con id: {id}");
+
+                return Ok(updatedModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ocurrio un error en sistema {ex.Message} - {ex.InnerException?.Message}");
+            }
+        }
+
         public IActionResult Index()
         {
             return View();

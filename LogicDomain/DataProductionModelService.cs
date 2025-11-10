@@ -22,7 +22,7 @@ namespace LogicDomain
             {
                 Active = true,
                 CreateBy = modelDto.CreateBy,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 Id = Guid.NewGuid(),
                 ModelDescription = modelDto.ModelDescription
             };
