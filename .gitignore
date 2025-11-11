@@ -62,3 +62,5 @@ Generated_Code/
 
 # Test results
 TestResults/
+
+.fake

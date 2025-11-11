@@ -103,7 +103,7 @@ namespace LogicDomain
             model.Active = modelDto.Active;
             model.ModelDescription = modelDto.ModelDescription;
             model.CreateBy = modelDto.CreateBy;
-            model.CreateDate = modelDto.CreateDate;
+            model.CreateDate = DateTime.Now;
 
             await _dataContext.SaveChangesAsync();
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Models
+namespace Entity.Dtos
 {
-    public class DataProductionPartNumber
+    public class DataProductionPartNumberDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
@@ -17,13 +17,8 @@ namespace Entity.Models
         public string PartNumberDescription { get; set; } = string.Empty;
         public string SNP { get; set; } = string.Empty;
 
-        public virtual DataProductionModel? DataProductionModel { get; set; }
-        public Guid ProductionModelId { get; set; }
-        public virtual DataProductionLocation? DataProductionLocation { get; set; }
-        public Guid ProductionLocationId { get; set; }
-        public virtual DataProductionArea? DataProductionArea { get; set; }
-        public Guid ProductionAreaId { get; set; }
-
-
+        public string? ProductionModel { get; set; }
+        public string? ProductionLocation { get; set; }
+        public string? ProductionArea { get; set; }
     }
 }

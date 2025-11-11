@@ -89,6 +89,10 @@ namespace LogicData.Context
                 entity.HasOne(e => e.DataProductionLocation)
                       .WithMany(e => e.ProductionPartNumbers)
                       .HasForeignKey(e => e.ProductionLocationId);
+
+                entity.HasOne(e => e.DataProductionArea)
+                      .WithMany(e => e.ProductionPartNumbers)
+                      .HasForeignKey(e => e.ProductionAreaId);
             });
 
         }
