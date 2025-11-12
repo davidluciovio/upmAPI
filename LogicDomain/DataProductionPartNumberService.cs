@@ -1,4 +1,4 @@
-using LogicData.Context;
+﻿using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace LogicDomain
                 SNP = createdPartNumber.SNP,
                 ProductionModel = createdPartNumber.DataProductionModel?.ModelDescription,
                 ProductionLocation = createdPartNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = createdPartNumber.DataProductionArea?.AreaName
+                ProductionArea = createdPartNumber.DataProductionArea?.AreaDescription
             };
         }
 
@@ -75,7 +75,7 @@ namespace LogicDomain
                 SNP = partNumber.SNP,
                 ProductionModel = partNumber.DataProductionModel?.ModelDescription,
                 ProductionLocation = partNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = partNumber.DataProductionArea?.AreaName
+                ProductionArea = partNumber.DataProductionArea?.AreaDescription
             }).ToList();
         }
 
@@ -98,11 +98,11 @@ namespace LogicDomain
                 CreateBy = partNumber.CreateBy,
                 CreateDate = partNumber.CreateDate,
                 PartNumberName = partNumber.PartNumberName,
-                PartNumberDescription = partNumber.PartDescription,
+                PartNumberDescription = partNumber.PartNumberDescription,
                 SNP = partNumber.SNP,
                 ProductionModel = partNumber.DataProductionModel?.ModelDescription,
                 ProductionLocation = partNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = partNumber.DataProductionArea?.AreaName
+                ProductionArea = partNumber.DataProductionArea?.AreaDescription
             };
         }
 
@@ -138,24 +138,17 @@ namespace LogicDomain
                 throw new KeyNotFoundException($"ProductionPartNumber with Id '{id}' not found.");
             }
 
-            partNumber.Active = partNumberDto.Active;
-            partNumber.PartNumber = partNumberDto.PartNumberName;
-            partNumber.PartDescription = partNumberDto.PartNumberDescription;
-
-            if (int.TryParse(partNumberDto.SNP, out int snp))
-            {
-                partNumber.StandardPack = snp;
-            }
-
-            partNumber.UpdateBy = partNumberDto.CreateBy; // DTO lacks UpdateBy, using CreateBy as a fallback.
-            partNumber.UpdateDate = DateTime.Now;
+            partNumber.Active = dto.Active;
+            partNumber.PartNumberName = dto.PartNumberName;
+            partNumber.PartNumberDescription = dto.PartNumberDescription;
+            partNumber.SNP = dto.SNP;
 
             await _dataContext.SaveChangesAsync();
 
             var updatedPartNumber = await _dataContext.ProductionPartNumbers
-                .Include(p => p.Model)
-                .Include(p => p.Location)
-                .Include(p => p.ProductionArea)
+                .Include(p => p.DataProductionModel)
+                .Include(p => p.DataProductionLocation)
+                .Include(p => p.DataProductionArea)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             return new Entity.Dtos.DataProductionPartNumberDto
@@ -164,12 +157,12 @@ namespace LogicDomain
                 Active = updatedPartNumber.Active,
                 CreateBy = updatedPartNumber.CreateBy,
                 CreateDate = updatedPartNumber.CreateDate,
-                PartNumberName = updatedPartNumber.PartNumber,
-                PartNumberDescription = updatedPartNumber.PartDescription,
-                SNP = updatedPartNumber.StandardPack.ToString(),
-                ProductionModel = updatedPartNumber.Model?.ModelDescription,
-                ProductionLocation = updatedPartNumber.Location?.LocationDescription,
-                ProductionArea = updatedPartNumber.ProductionArea?.AreaName
+                PartNumberName = updatedPartNumber.PartNumberName,
+                PartNumberDescription = updatedPartNumber.PartNumberDescription,
+                SNP = updatedPartNumber.SNP,
+                ProductionModel = updatedPartNumber.DataProductionModel?.ModelDescription,
+                ProductionLocation = updatedPartNumber.DataProductionLocation?.LocationDescription,
+                ProductionArea = updatedPartNumber.DataProductionArea?.AreaDescription
             };
         }
     }

@@ -20,7 +20,7 @@ namespace LogicDomain
         {
             var model = new Entity.Models.DataProductionModel
             {
-                Active = true,
+                Active = false,
                 CreateBy = modelDto.CreateBy,
                 CreateDate = DateTime.Now,
                 Id = Guid.NewGuid(),
@@ -90,7 +90,7 @@ namespace LogicDomain
             model.Active = true;
             await _dataContext.SaveChangesAsync();
             return true;
-        }   
+        }
 
         public async Task<Entity.Dtos.DataProductionModelDto> UpdateProductionModel(Guid id, Entity.Dtos.DataProductionModelDto modelDto)
         {
