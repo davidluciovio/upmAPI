@@ -1,4 +1,5 @@
-﻿using Entity.Models;
+﻿using Entity.Models.DataProduction;
+using Entity.Models.ProductionControl;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

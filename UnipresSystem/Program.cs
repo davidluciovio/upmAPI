@@ -1,6 +1,7 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Auth;
 using LogicData.Context;
 using LogicDomain;
+using LogicDomain.DataProduction;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

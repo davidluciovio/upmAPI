@@ -1,4 +1,4 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace UnipresSystem.Data

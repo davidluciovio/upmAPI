@@ -1,5 +1,6 @@
-﻿using Entity.Dtos;
+﻿using Entity.Dtos.Auth;
 using Entity.Models;
+using Entity.Models.Auth;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System;

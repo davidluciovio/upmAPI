@@ -1,4 +1,5 @@
-﻿using Entity.Models;
+﻿using Entity.Models.DataProduction;
+using Entity.Models.DataUPM;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace LogicData.Context
 
             builder.Entity<DataStatus>(entity =>
             {
-                entity.ToTable("Status");
+                entity.ToTable("DataStatus");
                 entity.HasKey(e => e.Id);
 
                 entity.HasIndex(e => e.StatusDescription).IsUnique();
@@ -65,7 +66,7 @@ namespace LogicData.Context
 
             builder.Entity<DataWorkShift>(entity =>
             {
-                entity.ToTable("WorkShift");
+                entity.ToTable("DataWorkShift");
                 entity.HasKey(e => e.Id);
 
                 entity.HasIndex(e => e.ShiftDescription).IsUnique();

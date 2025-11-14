@@ -1,5 +1,5 @@
-﻿using Entity.Dtos;
-using Entity.Models;
+﻿using Entity.Dtos.Auth;
+using Entity.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

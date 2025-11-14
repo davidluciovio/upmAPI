@@ -1,5 +1,5 @@
-﻿using Entity.Dtos;
-using LogicDomain;
+﻿using Entity.Dtos.DataProduction;
+using LogicDomain.DataProduction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UnipresSystem.Controllers

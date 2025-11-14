@@ -1,5 +1,5 @@
-﻿using Entity.Dtos;
-using Entity.Models;
+﻿using Entity.Dtos.Auth;
+using Entity.Models.Auth;
 using LogicData.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

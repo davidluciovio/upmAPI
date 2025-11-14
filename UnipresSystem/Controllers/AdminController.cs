@@ -1,4 +1,4 @@
-﻿using Entity.Dtos;
+﻿using Entity.Dtos.Auth;
 using LogicDomain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
