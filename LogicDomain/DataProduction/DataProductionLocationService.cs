@@ -42,7 +42,7 @@ namespace LogicDomain.DataProduction
             };
         }
 
-        public async Task<List<DataProductionLocationDto>> GetAllProductionAreas()
+        public async Task<List<DataProductionLocationDto>> GetAllProductionLocations()
         {
             var locations = await _dataContext.ProductionLocations.ToListAsync();
             return locations.Select(location => new DataProductionLocationDto
@@ -54,5 +54,71 @@ namespace LogicDomain.DataProduction
                 LocationDescription = location.LocationDescription
             }).ToList();
         }
+        public async Task<DataProductionLocationDto?> GetProductionLocationById(Guid id)
+        {
+            var location = await _dataContext.ProductionLocations.FindAsync(id);
+            if (location == null)
+            {
+                return null;
+            }
+            return new DataProductionLocationDto
+            {
+                Id = location.Id,
+                Active = location.Active,
+                CreateBy = location.CreateBy,
+                CreateDate = location.CreateDate,
+                LocationDescription = location.LocationDescription
+            };
+        }
+
+        public async Task<bool> DeactivateProductionLocation(Guid id)
+        {
+            var Location = await _dataContext.ProductionLocations.FindAsync(id);
+            if (Location == null)
+            {
+                return false;
+            }
+            Location.Active = false;
+            await _dataContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ActivateProductionLocation(Guid id)
+        {
+            var Location = await _dataContext.ProductionLocations.FindAsync(id);
+            if (Location == null)
+            {
+                return false;
+            }
+            Location.Active = true;
+            await _dataContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<DataProductionLocationDto> UpdateProductionLocation(Guid id, DataProductionLocationDto locationDto)
+        {
+            var location = await _dataContext.ProductionLocations.FindAsync(id);
+            if (location == null)
+            {
+                throw new KeyNotFoundException($"ProductionLocation with Id '{id}' not found.");
+            }
+
+            location.Active = locationDto.Active;
+            location.LocationDescription = locationDto.LocationDescription;
+            location.CreateBy = locationDto.CreateBy;
+            location.CreateDate = DateTime.Now;
+
+            await _dataContext.SaveChangesAsync();
+
+            return new DataProductionLocationDto
+            {
+                Id = location.Id,
+                Active = location.Active,
+                CreateBy = location.CreateBy,
+                CreateDate = location.CreateDate,
+                LocationDescription = location.LocationDescription
+            };
+        }
+
     }
 }

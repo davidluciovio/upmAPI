@@ -150,6 +150,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
+builder.Services.AddScoped<DataProductionLocationService>();
 
 //***************************************************************************************************
 //***************************************************************************************************
