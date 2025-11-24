@@ -28,19 +28,13 @@ namespace LogicDomain.DataProduction
                 CreateBy = dto.CreateBy,
                 PartNumberName = dto.PartNumberName,
                 PartNumberDescription = dto.PartNumberDescription,
-                SNP = dto.SNP,
-                ProductionModelId = dto.ProductionModelId,
-                ProductionLocationId = dto.ProductionLocationId,
-                ProductionAreaId = dto.ProductionAreaId
+              
             };
             _dataContext.ProductionPartNumbers.Add(partNumber);
             await _dataContext.SaveChangesAsync();
 
             // Re-fetch with includes to build the correct DTO
             var createdPartNumber = await _dataContext.ProductionPartNumbers
-                .Include(p => p.DataProductionModel)
-                .Include(p => p.DataProductionLocation)
-                .Include(p => p.DataProductionArea)
                 .FirstOrDefaultAsync(p => p.Id == partNumber.Id);
 
             return new DataProductionPartNumberDto
@@ -50,20 +44,13 @@ namespace LogicDomain.DataProduction
                 CreateBy = createdPartNumber.CreateBy,
                 CreateDate = createdPartNumber.CreateDate,
                 PartNumberName = createdPartNumber.PartNumberName,
-                PartNumberDescription = createdPartNumber.PartNumberDescription,
-                SNP = createdPartNumber.SNP,
-                ProductionModel = createdPartNumber.DataProductionModel?.ModelDescription,
-                ProductionLocation = createdPartNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = createdPartNumber.DataProductionArea?.AreaDescription
+                PartNumberDescription = createdPartNumber.PartNumberDescription
             };
         }
 
         public async Task<List<DataProductionPartNumberDto>> GetAllProductionPartNumbers()
         {
             var partNumbers = await _dataContext.ProductionPartNumbers
-                .Include(p => p.DataProductionModel)
-                .Include(p => p.DataProductionLocation)
-                .Include(p => p.DataProductionArea)
                 .ToListAsync();
 
             return partNumbers.Select(partNumber => new DataProductionPartNumberDto
@@ -74,19 +61,12 @@ namespace LogicDomain.DataProduction
                 CreateDate = partNumber.CreateDate,
                 PartNumberName = partNumber.PartNumberName,
                 PartNumberDescription = partNumber.PartNumberDescription,
-                SNP = partNumber.SNP,
-                ProductionModel = partNumber.DataProductionModel?.ModelDescription,
-                ProductionLocation = partNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = partNumber.DataProductionArea?.AreaDescription
             }).ToList();
         }
 
         public async Task<DataProductionPartNumberDto?> GetProductionPartNumberById(Guid id)
         {
             var partNumber = await _dataContext.ProductionPartNumbers
-                .Include(p => p.DataProductionModel)
-                .Include(p => p.DataProductionLocation)
-                .Include(p => p.DataProductionArea)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (partNumber == null)
@@ -100,11 +80,7 @@ namespace LogicDomain.DataProduction
                 CreateBy = partNumber.CreateBy,
                 CreateDate = partNumber.CreateDate,
                 PartNumberName = partNumber.PartNumberName,
-                PartNumberDescription = partNumber.PartNumberDescription,
-                SNP = partNumber.SNP,
-                ProductionModel = partNumber.DataProductionModel?.ModelDescription,
-                ProductionLocation = partNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = partNumber.DataProductionArea?.AreaDescription
+                PartNumberDescription = partNumber.PartNumberDescription
             };
         }
 
@@ -143,14 +119,10 @@ namespace LogicDomain.DataProduction
             partNumber.Active = dto.Active;
             partNumber.PartNumberName = dto.PartNumberName;
             partNumber.PartNumberDescription = dto.PartNumberDescription;
-            partNumber.SNP = dto.SNP;
 
             await _dataContext.SaveChangesAsync();
 
             var updatedPartNumber = await _dataContext.ProductionPartNumbers
-                .Include(p => p.DataProductionModel)
-                .Include(p => p.DataProductionLocation)
-                .Include(p => p.DataProductionArea)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             return new DataProductionPartNumberDto
@@ -160,11 +132,7 @@ namespace LogicDomain.DataProduction
                 CreateBy = updatedPartNumber.CreateBy,
                 CreateDate = updatedPartNumber.CreateDate,
                 PartNumberName = updatedPartNumber.PartNumberName,
-                PartNumberDescription = updatedPartNumber.PartNumberDescription,
-                SNP = updatedPartNumber.SNP,
-                ProductionModel = updatedPartNumber.DataProductionModel?.ModelDescription,
-                ProductionLocation = updatedPartNumber.DataProductionLocation?.LocationDescription,
-                ProductionArea = updatedPartNumber.DataProductionArea?.AreaDescription
+                PartNumberDescription = updatedPartNumber.PartNumberDescription
             };
         }
     }

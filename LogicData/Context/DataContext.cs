@@ -20,6 +20,7 @@ namespace LogicData.Context
         public DbSet<DataProductionLocation> ProductionLocations { get; set; }
         public DbSet<DataProductionPartNumber> ProductionPartNumbers { get; set; }
         public DbSet<DataProductionArea> ProductionAreas { get; set; }
+        public DbSet<DataProductionLine> ProductionLines { get; set; }
         public DbSet<DataStatus> Statuses { get; set; }
 
 
@@ -53,6 +54,14 @@ namespace LogicData.Context
                 entity.HasIndex(e => e.AreaDescription).IsUnique();
                 entity.Property(e => e.AreaDescription).IsRequired().HasMaxLength(100);
             });
+            
+            builder.Entity<DataProductionLine>(entity =>
+            {
+                entity.ToTable("ProductionLine");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.LineDescription).IsUnique();
+                entity.Property(e => e.LineDescription).IsRequired().HasMaxLength(500);
+            });
 
             builder.Entity<DataStatus>(entity =>
             {
@@ -83,17 +92,7 @@ namespace LogicData.Context
                 entity.Property(e => e.PartNumberName).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.PartNumberDescription).HasMaxLength(500);
 
-                entity.HasOne(e => e.DataProductionModel)
-                      .WithMany(e => e.ProductionPartNumbers)
-                      .HasForeignKey(e => e.ProductionModelId);
-
-                entity.HasOne(e => e.DataProductionLocation)
-                      .WithMany(e => e.ProductionPartNumbers)
-                      .HasForeignKey(e => e.ProductionLocationId);
-
-                entity.HasOne(e => e.DataProductionArea)
-                      .WithMany(e => e.ProductionPartNumbers)
-                      .HasForeignKey(e => e.ProductionAreaId);
+                
             });
 
         }

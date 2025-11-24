@@ -4,6 +4,7 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogicData.Migrations.Data
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251120172101_rename-tables")]
+    partial class renametables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,35 +53,6 @@ namespace LogicData.Migrations.Data
                         .IsUnique();
 
                     b.ToTable("ProductionArea", "upm");
-                });
-
-            modelBuilder.Entity("Entity.Models.DataProduction.DataProductionLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LineDescription")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LineDescription")
-                        .IsUnique();
-
-                    b.ToTable("ProductionLine", "upm");
                 });
 
             modelBuilder.Entity("Entity.Models.DataProduction.DataProductionLocation", b =>
@@ -165,10 +139,29 @@ namespace LogicData.Migrations.Data
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<Guid>("ProductionAreaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductionLocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductionModelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SNP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PartNumberName")
                         .IsUnique();
+
+                    b.HasIndex("ProductionAreaId");
+
+                    b.HasIndex("ProductionLocationId");
+
+                    b.HasIndex("ProductionModelId");
 
                     b.ToTable("ProductionPartNumber", "upm");
                 });
@@ -238,6 +231,48 @@ namespace LogicData.Migrations.Data
                         .IsUnique();
 
                     b.ToTable("DataWorkShift", "upm");
+                });
+
+            modelBuilder.Entity("Entity.Models.DataProduction.DataProductionPartNumber", b =>
+                {
+                    b.HasOne("Entity.Models.DataProduction.DataProductionArea", "DataProductionArea")
+                        .WithMany("ProductionPartNumbers")
+                        .HasForeignKey("ProductionAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.DataProduction.DataProductionLocation", "DataProductionLocation")
+                        .WithMany("ProductionPartNumbers")
+                        .HasForeignKey("ProductionLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.DataProduction.DataProductionModel", "DataProductionModel")
+                        .WithMany("ProductionPartNumbers")
+                        .HasForeignKey("ProductionModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DataProductionArea");
+
+                    b.Navigation("DataProductionLocation");
+
+                    b.Navigation("DataProductionModel");
+                });
+
+            modelBuilder.Entity("Entity.Models.DataProduction.DataProductionArea", b =>
+                {
+                    b.Navigation("ProductionPartNumbers");
+                });
+
+            modelBuilder.Entity("Entity.Models.DataProduction.DataProductionLocation", b =>
+                {
+                    b.Navigation("ProductionPartNumbers");
+                });
+
+            modelBuilder.Entity("Entity.Models.DataProduction.DataProductionModel", b =>
+                {
+                    b.Navigation("ProductionPartNumbers");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,7 +15,6 @@ namespace Entity.Models.DataProduction
 
         public string AreaDescription { get; set; } = string.Empty;
 
-        public ICollection<DataProductionPartNumber> ProductionPartNumbers { get; set; } = new List<DataProductionPartNumber>();
 
     }
 }

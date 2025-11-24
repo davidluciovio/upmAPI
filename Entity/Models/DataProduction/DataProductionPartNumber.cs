@@ -15,15 +15,6 @@ namespace Entity.Models.DataProduction
 
         public string PartNumberName { get; set; } = string.Empty;
         public string PartNumberDescription { get; set; } = string.Empty;
-        public string SNP { get; set; } = string.Empty;
-
-        public virtual DataProductionModel? DataProductionModel { get; set; }
-        public Guid ProductionModelId { get; set; }
-        public virtual DataProductionLocation? DataProductionLocation { get; set; }
-        public Guid ProductionLocationId { get; set; }
-        public virtual DataProductionArea? DataProductionArea { get; set; }
-        public Guid ProductionAreaId { get; set; }
-
 
     }
 }

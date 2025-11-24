@@ -15,6 +15,5 @@ namespace Entity.Models.DataProduction
 
         public string ModelDescription { get; set; } = string.Empty;
 
-        public ICollection<DataProductionPartNumber> ProductionPartNumbers { get; set; } = new List<DataProductionPartNumber>();
     }
 }
