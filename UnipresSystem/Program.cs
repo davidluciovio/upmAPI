@@ -2,12 +2,15 @@
 using LogicData.Context;
 using LogicDomain;
 using LogicDomain.DataProduction;
+using LogicDomain.ProductionControl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
+using Entity.Interfaces;
+using Entity.Dtos.ProductionControl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,6 +154,8 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
 builder.Services.AddScoped<DataProductionLocationService>();
+builder.Services.AddScoped<DataProductionPartNumberService>();
+builder.Services.AddScoped<IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto>, PartNumberAreaService>();
 
 //***************************************************************************************************
 //***************************************************************************************************

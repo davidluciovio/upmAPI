@@ -16,30 +16,38 @@ namespace LogicData.Context
         {
         }
 
-        public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
+        //public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
+        public DbSet<PartNumberArea> PartNumberAreas { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.HasDefaultSchema("upm_pc");
+            builder.HasDefaultSchema("upm_productionControl");
             base.OnModelCreating(builder);
 
-            builder.Ignore<DataProductionModel>();
-            builder.Ignore<DataProductionLocation>();
-            builder.Ignore<DataProductionPartNumber>();
-
-            builder.Entity<ProductionControlComponentAlert>()
-                .HasOne<DataProductionPartNumber>()
-                .WithMany()
-                .HasForeignKey(e => e.ProductionPartNumberId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<ProductionControlComponentAlert>(entity =>
+            builder.Entity<PartNumberArea>(entity =>
             {
-                entity.ToTable("ComponentAlert");
+                entity.ToTable("PartNumberArea");
                 entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PartNumberId);
+                entity.HasIndex(e => e.AreaId);
 
+                entity.Property(e => e.PartNumberId).IsRequired();
+                entity.Property(e => e.AreaId).IsRequired();
             });
+
+            //builder.Entity<ProductionControlComponentAlert>()
+            //    .HasOne<DataProductionPartNumber>()
+            //    .WithMany()
+            //    .HasForeignKey(e => e.ProductionPartNumberId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            //builder.Entity<ProductionControlComponentAlert>(entity =>
+            //{
+            //    entity.ToTable("ComponentAlert");
+            //    entity.HasKey(e => e.Id);
+
+            //});
 
         }
             

@@ -26,7 +26,7 @@ namespace LogicData.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.HasDefaultSchema("upm");
+            builder.HasDefaultSchema("upm_data");
             base.OnModelCreating(builder);
 
             builder.Entity<DataProductionModel>(entity =>
