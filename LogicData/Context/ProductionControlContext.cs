@@ -18,6 +18,7 @@ namespace LogicData.Context
 
         //public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
         public DbSet<PartNumberArea> PartNumberAreas { get; set; }
+        public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -36,6 +37,16 @@ namespace LogicData.Context
                 entity.Property(e => e.AreaId).IsRequired();
             });
 
+            builder.Entity<PartNumberLocation>(entity =>
+            {
+                entity.ToTable("PartNumberLocation");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PartNumberId);
+                entity.HasIndex(e => e.LocationId);
+
+                entity.Property(e => e.PartNumberId).IsRequired();
+                entity.Property(e => e.LocationId).IsRequired();
+            });
             //builder.Entity<ProductionControlComponentAlert>()
             //    .HasOne<DataProductionPartNumber>()
             //    .WithMany()

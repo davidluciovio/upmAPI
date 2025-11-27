@@ -155,7 +155,9 @@ builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
 builder.Services.AddScoped<DataProductionLocationService>();
 builder.Services.AddScoped<DataProductionPartNumberService>();
+
 builder.Services.AddScoped<IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto>, PartNumberAreaService>();
+builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 
 //***************************************************************************************************
 //***************************************************************************************************
