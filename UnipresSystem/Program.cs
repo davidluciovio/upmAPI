@@ -11,6 +11,7 @@ using System.Text;
 using UnipresSystem.Data;
 using Entity.Interfaces;
 using Entity.Dtos.ProductionControl;
+using Entity.Dtos.DataProduction.DataProductionLine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -155,6 +156,7 @@ builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
 builder.Services.AddScoped<DataProductionLocationService>();
 builder.Services.AddScoped<DataProductionPartNumberService>();
+builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
 
 builder.Services.AddScoped<IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto>, PartNumberAreaService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();

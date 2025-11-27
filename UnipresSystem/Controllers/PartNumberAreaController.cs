@@ -69,7 +69,7 @@ namespace UnipresSystem.Controllers
             }
         }
 
-        [HttpPut("v1/update/{id}")]
+        [HttpPost("v1/update/{id}")]
         public async Task<IActionResult> UpdatePartNumberArea(Guid id, [FromBody] PartNumberAreaUpdateDto updateDto)
         {
             try
