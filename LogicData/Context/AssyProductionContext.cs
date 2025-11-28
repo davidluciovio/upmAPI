@@ -19,10 +19,23 @@ namespace LogicData.Context
             
         }
 
+        public DbSet<Entity.Models.AssyProduction.ProductionStation> ProductionStations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.HasDefaultSchema("upm_assyProduction");
             base.OnModelCreating(builder);
+
+            builder.Entity<Entity.Models.AssyProduction.ProductionStation>(entity =>
+            {
+                entity.ToTable("ProductionStation");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PartNumberId);
+                entity.HasIndex(e => e.LineId);
+
+                entity.Property(e => e.PartNumberId).IsRequired();
+                entity.Property(e => e.LineId).IsRequired();
+            });
         }
     }
 }

@@ -1,6 +1,11 @@
-﻿using Entity.Models.Auth;
+﻿using Entity.Dtos.AssyProduction;
+using Entity.Dtos.DataProduction.DataProductionLine;
+using Entity.Dtos.ProductionControl;
+using Entity.Interfaces;
+using Entity.Models.Auth;
 using LogicData.Context;
 using LogicDomain;
+using LogicDomain._04_AssyProduction;
 using LogicDomain.DataProduction;
 using LogicDomain.ProductionControl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,9 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
-using Entity.Interfaces;
-using Entity.Dtos.ProductionControl;
-using Entity.Dtos.DataProduction.DataProductionLine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,13 @@ builder.Services.AddDbContext<DataContext>(options =>
     {
         // Le decimos que guarde sus migraciones en una tabla con sufijo
         sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_Data");
+    }));
+
+builder.Services.AddDbContext<AssyProductionContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        // Le decimos que guarde sus migraciones en una tabla con sufijo
+        sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_AssyProduction");
     }));
 
 //***************************************************************************************************
@@ -160,6 +169,8 @@ builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateD
 
 builder.Services.AddScoped<IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto>, PartNumberAreaService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
+
+builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 
 //***************************************************************************************************
 //***************************************************************************************************
