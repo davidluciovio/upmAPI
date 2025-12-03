@@ -17,7 +17,7 @@ namespace LogicData.Context
         }
 
         //public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
-        public DbSet<PartNumberArea> PartNumberAreas { get; set; }
+        public DbSet<PartNumberLogistics> partNumberLogistics { get; set; }
         public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
 
 
@@ -26,15 +26,19 @@ namespace LogicData.Context
             builder.HasDefaultSchema("upm_productionControl");
             base.OnModelCreating(builder);
 
-            builder.Entity<PartNumberArea>(entity =>
+            builder.Entity<PartNumberLogistics>(entity =>
             {
-                entity.ToTable("PartNumberArea");
+                entity.ToTable("PartNumberLogistics");
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.PartNumberId);
                 entity.HasIndex(e => e.AreaId);
+                entity.HasIndex(e => e.LocationId);
 
                 entity.Property(e => e.PartNumberId).IsRequired();
                 entity.Property(e => e.AreaId).IsRequired();
+                entity.Property(e => e.LocationId).IsRequired();
+
+                entity.Property(e => e.SNP).HasDefaultValue(0);
             });
 
             builder.Entity<PartNumberLocation>(entity =>

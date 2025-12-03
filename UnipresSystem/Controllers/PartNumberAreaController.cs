@@ -10,9 +10,9 @@ namespace UnipresSystem.Controllers
     [Route("api/[controller]")]
     public class PartNumberAreaController : ControllerBase
     {
-        private readonly IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto> _partNumberAreaService;
+        private readonly IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> _partNumberAreaService;
 
-        public PartNumberAreaController(IServiceCrud<PartNumberAreaDto, PartNumberAreaCreateDto, PartNumberAreaUpdateDto> partNumberAreaService)
+        public PartNumberAreaController(IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> partNumberAreaService)
         {
             _partNumberAreaService = partNumberAreaService;
         }
@@ -50,7 +50,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/create")]
-        public async Task<IActionResult> CreatePartNumberArea([FromBody] PartNumberAreaCreateDto createDto)
+        public async Task<IActionResult> CreatePartNumberArea([FromBody] PartNumberLogisticsCreateDto createDto)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/update/{id}")]
-        public async Task<IActionResult> UpdatePartNumberArea(Guid id, [FromBody] PartNumberAreaUpdateDto updateDto)
+        public async Task<IActionResult> UpdatePartNumberArea(Guid id, [FromBody] PartNumberLogisticsUpdateDto updateDto)
         {
             try
             {

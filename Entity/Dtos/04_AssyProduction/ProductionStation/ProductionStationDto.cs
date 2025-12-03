@@ -13,5 +13,11 @@ namespace Entity.Dtos.AssyProduction
 
         public string PartNumber { get; set; } = string.Empty;
         public string Line { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+
+        public float ObjetiveTime { get; set; }
+        public float NetoTime { get; set; }
+        public int OperatorQuantity { get; set; }
+        public int PartNumberQuantity { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogicData.Migrations.AssyProduction
 {
     [DbContext(typeof(AssyProductionContext))]
-    partial class AssyProductionContextModelSnapshot : ModelSnapshot
+    [Migration("20251202212555_editTable_ProductionStation_addColumn_ModelId")]
+    partial class editTable_ProductionStation_addColumn_ModelId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,20 +48,8 @@ namespace LogicData.Migrations.AssyProduction
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("NetoTime")
-                        .HasColumnType("real");
-
-                    b.Property<float>("ObjetiveTime")
-                        .HasColumnType("real");
-
-                    b.Property<int>("OperatorQuantity")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("PartNumberId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PartNumberQuantity")
-                        .HasColumnType("int");
 
                     b.Property<string>("UpdateBy")
                         .IsRequired()

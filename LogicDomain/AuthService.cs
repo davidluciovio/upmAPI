@@ -42,9 +42,15 @@ namespace LogicDomain
 
             var user = new AuthUser
             {
+                Active = true,
+                CreateDate = DateTime.UtcNow,
+                CreateBy = registerDto.CreateBy,
+                UpdateDate = DateTime.UtcNow,
+                UpdateBy = registerDto.CreateBy,
                 Email = registerDto.Email,
                 UserName = registerDto.UserName ?? registerDto.Email,
                 SecurityStamp = Guid.NewGuid().ToString() // Necesario para Identity
+                
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace LogicDomain._04_AssyProduction
 {
@@ -26,27 +27,37 @@ namespace LogicDomain._04_AssyProduction
         {
             var station = new ProductionStation
             {
-                PartNumberId = createDto.PartNumberId,
-                LineId = createDto.LineId,
-                Active = true,
                 CreateBy = createDto.CreateBy,
                 CreateDate = DateTime.UtcNow,
                 UpdateBy = createDto.UpdateBy,
-                UpdateDate = DateTime.UtcNow
+                UpdateDate = DateTime.UtcNow,
+                PartNumberId = createDto.PartNumberId,
+                LineId = createDto.LineId,
+                ModelId = createDto.ModelId,
+                Active = true,
+                NetoTime = createDto.NetoTime,
+                ObjetiveTime = createDto.ObjetiveTime,
+                OperatorQuantity = createDto.OperatorQuantity,
+                PartNumberQuantity = createDto.PartNumberQuantity
             };
             _assyProductionContext.ProductionStations.Add(station);
             await _assyProductionContext.SaveChangesAsync();
 
             return new ProductionStationDto
             {
-                Id = station.Id,
-                PartNumber = _dataContext.ProductionPartNumbers.Find(station.PartNumberId)?.PartNumberName ?? "N/A",
-                Line = _dataContext.ProductionLines.Find(station.LineId)?.LineDescription ?? "N/A",
                 Active = station.Active,
                 CreateBy = station.CreateBy,
                 CreateDate = station.CreateDate,
                 UpdateBy = station.UpdateBy,
-                UpdateDate = station.UpdateDate
+                UpdateDate = station.UpdateDate,
+                Id = station.Id,
+                PartNumber = _dataContext.ProductionPartNumbers.Find(station.PartNumberId)?.PartNumberName ?? "N/A",
+                Line = _dataContext.ProductionLines.Find(station.LineId)?.LineDescription ?? "N/A",
+                Model = _dataContext.ProductionModels.Find(station.ModelId)?.ModelDescription ?? "N/A",
+                NetoTime = station.NetoTime,
+                ObjetiveTime = station.ObjetiveTime,
+                OperatorQuantity = station.OperatorQuantity,
+                PartNumberQuantity = station.PartNumberQuantity
             };
         }
 
@@ -56,14 +67,19 @@ namespace LogicDomain._04_AssyProduction
 
             return stations.Select(s => new ProductionStationDto
             {
-                Id = s.Id,
-                PartNumber = _dataContext.ProductionPartNumbers.Find(s.PartNumberId)?.PartNumberName ?? "N/A",
-                Line = _dataContext.ProductionLines.Find(s.LineId)?.LineDescription ?? "N/A",
                 Active = s.Active,
                 CreateBy = s.CreateBy,
                 CreateDate = s.CreateDate,
                 UpdateBy = s.UpdateBy,
-                UpdateDate = s.UpdateDate
+                UpdateDate = s.UpdateDate,
+                Id = s.Id,
+                PartNumber = _dataContext.ProductionPartNumbers.Find(s.PartNumberId)?.PartNumberName ?? "N/A",
+                Line = _dataContext.ProductionLines.Find(s.LineId)?.LineDescription ?? "N/A",
+                Model = _dataContext.ProductionModels.Find(s.ModelId)?.ModelDescription ?? "N/A",
+                NetoTime = s.NetoTime,
+                ObjetiveTime = s.ObjetiveTime,
+                OperatorQuantity = s.OperatorQuantity,
+                PartNumberQuantity = s.PartNumberQuantity
             }).ToList();
         }
 
@@ -77,14 +93,19 @@ namespace LogicDomain._04_AssyProduction
 
             return new ProductionStationDto
             {
-                Id = station.Id,
-                PartNumber = _dataContext.ProductionPartNumbers.Find(station.PartNumberId)?.PartNumberName ?? "N/A",
-                Line = _dataContext.ProductionLines.Find(station.LineId)?.LineDescription ?? "N/A",
                 Active = station.Active,
                 CreateBy = station.CreateBy,
                 CreateDate = station.CreateDate,
                 UpdateBy = station.UpdateBy,
-                UpdateDate = station.UpdateDate
+                UpdateDate = station.UpdateDate,
+                Id = station.Id,
+                PartNumber = _dataContext.ProductionPartNumbers.Find(station.PartNumberId)?.PartNumberName ?? "N/A",
+                Line = _dataContext.ProductionLines.Find(station.LineId)?.LineDescription ?? "N/A",
+                Model = _dataContext.ProductionModels.Find(station.ModelId)?.ModelDescription ?? "N/A",
+                NetoTime = station.NetoTime,
+                ObjetiveTime = station.ObjetiveTime,
+                OperatorQuantity = station.OperatorQuantity,
+                PartNumberQuantity = station.PartNumberQuantity
             };
         }
 
@@ -99,25 +120,38 @@ namespace LogicDomain._04_AssyProduction
             var line = await _dataContext.ProductionLines.FindAsync(updateDto.LineId);
             if (line == null) throw new KeyNotFoundException("Line not found");
 
+            var model = await _dataContext.ProductionModels.FindAsync(updateDto.ModelId);
+            if (model == null) throw new KeyNotFoundException("Model not found");
+
             station.Active = updateDto.Active;
             station.PartNumberId = partNumber.Id;
             station.LineId = line.Id;
+            station.ModelId = updateDto.ModelId;
             station.UpdateBy = updateDto.UpdateBy;
             station.UpdateDate = DateTime.UtcNow;
+            station.ObjetiveTime = updateDto.ObjetiveTime;
+            station.NetoTime = updateDto.NetoTime;
+            station.OperatorQuantity = updateDto.OperatorQuantity;
+            station.PartNumberQuantity = updateDto.PartNumberQuantity;
 
             _assyProductionContext.ProductionStations.Update(station);
             await _assyProductionContext.SaveChangesAsync();
 
             return new ProductionStationDto
             {
-                Id = station.Id,
-                PartNumber = partNumber.PartNumberName,
-                Line = line.LineDescription,
                 Active = station.Active,
                 CreateBy = station.CreateBy,
                 CreateDate = station.CreateDate,
                 UpdateBy = station.UpdateBy,
-                UpdateDate = station.UpdateDate
+                UpdateDate = station.UpdateDate,
+                Id = station.Id,
+                PartNumber = partNumber.PartNumberName,
+                Line = line.LineDescription,
+                Model = model.ModelDescription,
+                NetoTime = station.NetoTime,
+                ObjetiveTime = station.ObjetiveTime,
+                OperatorQuantity = station.OperatorQuantity,
+                PartNumberQuantity = station.PartNumberQuantity
             };
         }
     }

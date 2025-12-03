@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Models.ProductionControl
+namespace Entity.Dtos.ProductionControl
 {
-    public class PartNumberArea
+    public class PartNumberLogisticsDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
@@ -15,7 +15,9 @@ namespace Entity.Models.ProductionControl
         public DateTime UpdateDate { get; set; }
         public string UpdateBy { get; set; } = string.Empty;
 
-        public Guid PartNumberId { get; set; }
-        public Guid AreaId { get; set; }
+        public string PartNumber { get; set; } = string.Empty;
+        public string Area { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public float SNP { get; set; }
     }
 }

@@ -32,9 +32,11 @@ namespace LogicData.Context
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.PartNumberId);
                 entity.HasIndex(e => e.LineId);
+                entity.HasIndex(e => e.ModelId);
 
                 entity.Property(e => e.PartNumberId).IsRequired();
                 entity.Property(e => e.LineId).IsRequired();
+                entity.Property(e => e.ModelId).IsRequired();
             });
         }
     }

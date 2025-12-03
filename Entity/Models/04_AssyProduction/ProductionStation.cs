@@ -17,5 +17,11 @@ namespace Entity.Models.AssyProduction
 
         public Guid PartNumberId { get; set; }
         public Guid LineId { get; set; }
+        public Guid ModelId { get; set; }
+
+        public float ObjetiveTime { get; set; }
+        public float NetoTime { get; set; }
+        public int OperatorQuantity { get; set; }
+        public int PartNumberQuantity { get; set; }
     }
 }
