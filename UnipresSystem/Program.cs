@@ -14,6 +14,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
+using LogicDomain._00_DataUPM;
+using Entity.Dtos._00_DataUPM;
+using Entity.Dtos._00_DataUPM.DataSecurityRole;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,8 +93,8 @@ builder.Services.AddIdentity<AuthUser, AuthRole>(options =>
         options.Password.RequireDigit = true;
         options.Password.RequireLowercase = true;
         options.Password.RequireUppercase = true;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 5;
     })
     .AddEntityFrameworkStores<AuthContext>()
     .AddDefaultTokenProviders();
@@ -165,6 +168,10 @@ builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
 builder.Services.AddScoped<DataProductionLocationService>();
 builder.Services.AddScoped<DataProductionPartNumberService>();
+
+builder.Services.AddScoped<IServiceCrud<DataSecurityUserDto, DataSecurityUserCreateDto, DataSecurityUserUpdateDto>, DataSecurityUserService>();
+builder.Services.AddScoped<IService<DataSecurityRoleResponseDto, DataSecurityRoleRequestDto>, DataSecurityRoleService>();
+
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
 
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();

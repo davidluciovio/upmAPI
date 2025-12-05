@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Dtos._00_DataUPM
+namespace Entity.Dtos._00_DataUPM.DataSecurityRole
 {
-    public class DataSecurityUserUpdate
+    public class DataSecurityRoleRequestDto
     {
+
     }
 }
