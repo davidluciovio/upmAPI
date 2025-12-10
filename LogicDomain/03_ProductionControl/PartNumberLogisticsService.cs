@@ -54,26 +54,53 @@ namespace LogicDomain.ProductionControl
             };
         }
 
-      
+
         public async Task<List<PartNumberLogisticsDto>> GetAlls()
         {
-            var partNumberLogistics = await _productionControlContext.partNumberLogistics.ToListAsync();
+            // 1. Traer la lista principal (Rápido, sin rastreo de cambios)
+            var logs = await _productionControlContext.partNumberLogistics
+                                                      .AsNoTracking()
+                                                      .ToListAsync();
 
-            return partNumberLogistics.Select(pna => new PartNumberLogisticsDto
+            // 2. Extraer los IDs únicos necesarios para hacer las consultas en bloque
+            //    (Asumo que los IDs pueden ser null, por eso el check de null)
+            var partIds = logs.Select(x => x.PartNumberId).Distinct().ToList();
+            var areaIds = logs.Select(x => x.AreaId).Distinct().ToList();
+            var locationIds = logs.Select(x => x.LocationId).Distinct().ToList();
+
+            // 3. Traer los datos de referencia del segundo contexto y convertirlos a Diccionarios
+            //    Usamos 'Contains' para traer solo lo necesario en una sola consulta por tabla.
+            var partsDict = await _dataContext.ProductionPartNumbers
+                .Where(p => partIds.Contains(p.Id))
+                .ToDictionaryAsync(k => k.Id, v => v.PartNumberName);
+
+            var areasDict = await _dataContext.ProductionAreas
+                .Where(a => areaIds.Contains(a.Id))
+                .ToDictionaryAsync(k => k.Id, v => v.AreaDescription);
+
+            var locationsDict = await _dataContext.ProductionLocations
+                .Where(l => locationIds.Contains(l.Id))
+                .ToDictionaryAsync(k => k.Id, v => v.LocationDescription);
+
+            // 4. Mapear los resultados en memoria (O(1) de velocidad gracias a los diccionarios)
+            var result = logs.Select(pna => new PartNumberLogisticsDto
             {
                 Id = pna.Id,
-                PartNumber = _dataContext.ProductionPartNumbers
-                    .Where(pn => pn.Id == pna.PartNumberId)
-                    .Select(pn => pn.PartNumberName)
-                    .FirstOrDefault() ?? pna.PartNumberId.ToString(),
-                Area = _dataContext.ProductionAreas
-                    .Where(a => a.Id == pna.AreaId)
-                    .Select(a=> a.AreaDescription)
-                    .FirstOrDefault() ?? pna.AreaId.ToString(),
-                Location = _dataContext.ProductionLocations
-                    .Where(l => l.Id == pna.LocationId)
-                    .Select(l => l.LocationDescription)
-                    .FirstOrDefault() ?? pna.LocationId.ToString(),
+
+                // Lógica: Intenta obtener el nombre del diccionario. 
+                // Si no existe (o el ID es null), devuelve el ID como string (tal como tu código original).
+                PartNumber = (pna.PartNumberId != null && partsDict.TryGetValue(pna.PartNumberId, out var partName))
+                             ? partName
+                             : pna.PartNumberId.ToString(),
+
+                Area = (pna.AreaId != null && areasDict.TryGetValue(pna.AreaId, out var areaName))
+                       ? areaName
+                       : pna.AreaId.ToString(),
+
+                Location = (pna.LocationId != null && locationsDict.TryGetValue(pna.LocationId, out var locName))
+                           ? locName
+                           : pna.LocationId.ToString(),
+
                 SNP = pna.SNP,
                 Active = pna.Active,
                 CreateBy = pna.CreateBy,
@@ -81,6 +108,8 @@ namespace LogicDomain.ProductionControl
                 UpdateBy = pna.UpdateBy,
                 UpdateDate = pna.UpdateDate
             }).ToList();
+
+            return result;
         }
 
         public async Task<PartNumberLogisticsDto?> GetById(Guid id)
