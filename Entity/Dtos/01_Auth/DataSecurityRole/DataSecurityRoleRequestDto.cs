@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Entity.Dtos._00_DataUPM.DataSecurityRole
+{
+    public class DataSecurityRoleRequestDto
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+}

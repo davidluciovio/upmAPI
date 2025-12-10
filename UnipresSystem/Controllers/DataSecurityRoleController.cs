@@ -71,7 +71,7 @@ namespace UnipresSystem.Controllers
             }
         }
 
-        [HttpPut("v1/update/{id}")]
+        [HttpPost("v1/update/{id}")]
         public async Task<IActionResult> UpdateRole(Guid id, [FromBody] DataSecurityRoleRequestDto updateDto)
         {
             try

@@ -17,6 +17,7 @@ using UnipresSystem.Data;
 using LogicDomain._00_DataUPM;
 using Entity.Dtos._00_DataUPM;
 using Entity.Dtos._00_DataUPM.DataSecurityRole;
+using Entity.Dtos._00_DataUPM.DataSecurityModule;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,6 +172,7 @@ builder.Services.AddScoped<DataProductionPartNumberService>();
 
 builder.Services.AddScoped<IServiceCrud<DataSecurityUserDto, DataSecurityUserCreateDto, DataSecurityUserUpdateDto>, DataSecurityUserService>();
 builder.Services.AddScoped<IService<DataSecurityRoleResponseDto, DataSecurityRoleRequestDto>, DataSecurityRoleService>();
+builder.Services.AddScoped<IService<DataSecurityModuleResponseDto, DataSecurityModuleRequestDto>, DataSecurityModuleService>();
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
 
