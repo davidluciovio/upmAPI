@@ -12,25 +12,25 @@ namespace UnipresSystem.Controllers
     [Authorize(Roles = "SuperAdmin")]
     public class AdminController : Controller
     {
-        private readonly AdminService _adminService;
-        public AdminController(AdminService adminService)
-        {
-            _adminService = adminService;
-        }
+        //private readonly AdminService _adminService;
+        //public AdminController(AdminService adminService)
+        //{
+        //    _adminService = adminService;
+        //}
 
-        [HttpPost("create-module")]
-        public async Task<IActionResult> CreateModulo([FromBody] AuthCreateModuloDto newModule)
-        {
-            try
-            { 
-                var module = await _adminService.CreateModule(newModule);
-                return CreatedAtAction(nameof(module), new { id = module.Id, module = module.Module }, module);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new {message = $"No se pudo crear el modulo {ex.Message}" });
-            }
-        }
+        //[HttpPost("create-module")]
+        //public async Task<IActionResult> CreateModulo([FromBody] AuthCreateModuloDto newModule)
+        //{
+        //    try
+        //    { 
+        //        var module = await _adminService.CreateModule(newModule);
+        //        return CreatedAtAction(nameof(module), new { id = module.Id, module = module.Module }, module);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new {message = $"No se pudo crear el modulo {ex.Message}" });
+        //    }
+        //}
 
         public IActionResult Index()
         {

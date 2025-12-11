@@ -1,29 +1,29 @@
-using Entity.Dtos.Auth;
+using Entity.Dtos._01_Auth.DataSecurityPermission;
 using Entity.Interfaces;
+using Entity.Models.Auth;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace LogicDomain._01_Auth
+namespace LogicDomain._00_DataUPM
 {
-    public class AuthPermissionsService : IService<AuthPermissionResponseDto, AuthCreatePermissionDto>
+    public class DataSecurityPermissionService : IService<DataSecurityPermissionResponseDto, DataSecurityPermissionRequestDto>
     {
         private readonly AuthContext _authContext;
 
-        public AuthPermissionsService(AuthContext authContext)
+        public DataSecurityPermissionService(AuthContext authContext)
         {
             _authContext = authContext;
         }
 
-        public async Task<AuthPermissionResponseDto> Create(AuthCreatePermissionDto dtocreate)
+        public async Task<DataSecurityPermissionResponseDto> Create(DataSecurityPermissionRequestDto dtocreate)
         {
-            if(await _authContext.Permissions.AnyAsync(p => p.Clave == dtocreate.Clave))
+            if (await _authContext.Permissions.AnyAsync(p => p.Permission == dtocreate.Permission && p.SubmoduleId == dtocreate.SubmoduleId))
             {
-                throw new InvalidOperationException($"Permission with key '{dtocreate.Clave}' already exists.");
+                throw new InvalidOperationException($"Permission with name '{dtocreate.Permission}' already exists for this submodule.");
             }
 
             var permission = new AuthPermissions
@@ -39,7 +39,7 @@ namespace LogicDomain._01_Auth
             _authContext.Permissions.Add(permission);
             await _authContext.SaveChangesAsync();
 
-            return new AuthPermissionResponseDto
+            return new DataSecurityPermissionResponseDto
             {
                 Id = permission.Id,
                 Permission = permission.Permission,
@@ -48,11 +48,11 @@ namespace LogicDomain._01_Auth
             };
         }
 
-        public async Task<List<AuthPermissionResponseDto>> GetAlls()
+        public async Task<List<DataSecurityPermissionResponseDto>> GetAlls()
         {
             return await _authContext.Permissions
                 .Where(p => p.Active)
-                .Select(p => new AuthPermissionResponseDto
+                .Select(p => new DataSecurityPermissionResponseDto
                 {
                     Id = p.Id,
                     Permission = p.Permission,
@@ -61,7 +61,7 @@ namespace LogicDomain._01_Auth
                 }).ToListAsync();
         }
 
-        public async Task<AuthPermissionResponseDto?> GetById(Guid id)
+        public async Task<DataSecurityPermissionResponseDto?> GetById(Guid id)
         {
             var permission = await _authContext.Permissions.FirstOrDefaultAsync(p => p.Id == id && p.Active);
 
@@ -70,7 +70,7 @@ namespace LogicDomain._01_Auth
                 return null;
             }
 
-            return new AuthPermissionResponseDto
+            return new DataSecurityPermissionResponseDto
             {
                 Id = permission.Id,
                 Permission = permission.Permission,
@@ -79,7 +79,7 @@ namespace LogicDomain._01_Auth
             };
         }
 
-        public async Task<AuthPermissionResponseDto> Update(Guid id, AuthCreatePermissionDto dtoUpdate)
+        public async Task<DataSecurityPermissionResponseDto> Update(Guid id, DataSecurityPermissionRequestDto dtoUpdate)
         {
             var permission = await _authContext.Permissions.FindAsync(id);
 
@@ -88,18 +88,19 @@ namespace LogicDomain._01_Auth
                 throw new KeyNotFoundException($"Permission with ID '{id}' not found.");
             }
 
-            if (await _authContext.Permissions.AnyAsync(p => p.Id != id && p.Clave == dtoUpdate.Clave))
+            if (await _authContext.Permissions.AnyAsync(p => p.Id != id && p.Permission == dtoUpdate.Permission && p.SubmoduleId == dtoUpdate.SubmoduleId))
             {
-                throw new InvalidOperationException($"Another permission with key '{dtoUpdate.Clave}' already exists.");
+                throw new InvalidOperationException($"Another permission with name '{dtoUpdate.Permission}' already exists for this submodule.");
             }
 
             permission.Permission = dtoUpdate.Permission;
             permission.Clave = dtoUpdate.Clave;
             permission.SubmoduleId = dtoUpdate.SubmoduleId;
+            permission.Active = dtoUpdate.Active;
 
             await _authContext.SaveChangesAsync();
 
-            return new AuthPermissionResponseDto
+            return new DataSecurityPermissionResponseDto
             {
                 Id = permission.Id,
                 Permission = permission.Permission,

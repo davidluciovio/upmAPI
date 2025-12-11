@@ -15,7 +15,7 @@ namespace Entity.Dtos._01_Auth.DataSecuritySubmodule
 
         public string Submodule { get; set; } = string.Empty;
         public Guid ModuleId { get; set; }
-
+         
         public string Icon { get; set; } = string.Empty;
         public string Route { get; set; } = string.Empty;
     }

@@ -1,10 +1,18 @@
-﻿using Entity.Dtos.AssyProduction;
+﻿using Entity.Dtos._00_DataUPM;
+using Entity.Dtos._00_DataUPM.DataSecurityModule;
+using Entity.Dtos._00_DataUPM.DataSecurityRole;
+using Entity.Dtos._01_Auth.DataSecurityPermission;
+using Entity.Dtos._01_Auth.DataSecurityRoleClaim;
+using Entity.Dtos._01_Auth.DataSecuritySubmodule;
+using Entity.Dtos.AssyProduction;
 using Entity.Dtos.DataProduction.DataProductionLine;
 using Entity.Dtos.ProductionControl;
 using Entity.Interfaces;
 using Entity.Models.Auth;
 using LogicData.Context;
 using LogicDomain;
+using LogicDomain._00_DataUPM;
+using LogicDomain._01_Auth;
 using LogicDomain._04_AssyProduction;
 using LogicDomain.DataProduction;
 using LogicDomain.ProductionControl;
@@ -14,10 +22,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
-using LogicDomain._00_DataUPM;
-using Entity.Dtos._00_DataUPM;
-using Entity.Dtos._00_DataUPM.DataSecurityRole;
-using Entity.Dtos._00_DataUPM.DataSecurityModule;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -164,15 +168,18 @@ builder.Services.AddAuthorization(options =>
 //***************************************************************************************************
 
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<DataProductionModelService>();
 builder.Services.AddScoped<DataProductionAreaService>();
 builder.Services.AddScoped<DataProductionLocationService>();
 builder.Services.AddScoped<DataProductionPartNumberService>();
 
 builder.Services.AddScoped<IServiceCrud<DataSecurityUserDto, DataSecurityUserCreateDto, DataSecurityUserUpdateDto>, DataSecurityUserService>();
+
 builder.Services.AddScoped<IService<DataSecurityRoleResponseDto, DataSecurityRoleRequestDto>, DataSecurityRoleService>();
 builder.Services.AddScoped<IService<DataSecurityModuleResponseDto, DataSecurityModuleRequestDto>, DataSecurityModuleService>();
+builder.Services.AddScoped<IService<DataSecuritySubmoduleResponseDto, DataSecuritySubmoduleRequestDto>, DataSecuritySubmoduleService>();
+builder.Services.AddScoped<IService<DataSecurityPermissionResponseDto, DataSecurityPermissionRequestDto>, DataSecurityPermissionService>();
+builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, DataSecurityRoleClaimRequestDto>, DataSecurityRoleClaimService>();
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
 

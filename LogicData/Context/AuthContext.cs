@@ -20,7 +20,7 @@ namespace LogicData.Context
         }
 
         public DbSet<AuthModule> Modules { get; set; }
-        public DbSet<AuthSubmodule> Submodulos { get; set; }
+        public DbSet<AuthSubmodule> Submodules { get; set; }
         public DbSet<AuthPermissions> Permissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

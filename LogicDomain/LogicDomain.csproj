@@ -15,4 +15,8 @@
     <ProjectReference Include="..\LogicData\LogicData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="00_DataUPM\" />
+  </ItemGroup>
+
 </Project>

@@ -4,18 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Dtos.Auth
+namespace Entity.Dtos._01_Auth.DataAuth
 {
     public class AuthRegisterDto
     {
         public string Email { get; set; } = string.Empty;
+        public string? UserName { get; set; }
         public string Password { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
-
-        public bool Active { get; set; }
-        public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
-        public DateTime UpdateDate { get; set; }
-        public string UpdateBy { get; set; } = string.Empty;
     }
 }

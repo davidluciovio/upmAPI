@@ -21,24 +21,24 @@ namespace UnipresSystem.Controllers
         }
 
         // --- CREAR ROLES ---
-        [HttpPost]
-        public async Task<IActionResult> CreateRole([FromBody] AuthCreateRoleDto dto)
-        {
-            if (await _roleManager.RoleExistsAsync(dto.RoleName))
-            {
-                return BadRequest("El rol ya existe");
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateRole([FromBody] AuthCreateRoleDto dto)
+        //{
+        //    if (await _roleManager.RoleExistsAsync(dto.RoleName))
+        //    {
+        //        return BadRequest("El rol ya existe");
+        //    }
 
-            var role = new AuthRole { Name = dto.RoleName };
-            var result = await _roleManager.CreateAsync(role);
+        //    var role = new AuthRole { Name = dto.RoleName };
+        //    var result = await _roleManager.CreateAsync(role);
+         
+        //    if (!result.Succeeded)
+        //    {
+        //        return BadRequest(result.Errors);
+        //    }
 
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(new { Message = "Rol creado" });
-        }
+        //    return Ok(new { Message = "Rol creado" });
+        //}
 
         // --- LISTAR ROLES ---
         [HttpGet]

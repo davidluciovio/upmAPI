@@ -1,6 +1,6 @@
-namespace Entity.Dtos._01_Auth.RoleClaim
+namespace Entity.Dtos._01_Auth.DataSecurityRoleClaim
 {
-    public class RoleClaimResponseDto
+    public class DataSecurityRoleClaimResponseDto
     {
         public int Id { get; set; }
         public string RoleId { get; set; } = string.Empty;

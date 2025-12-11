@@ -1,4 +1,5 @@
-﻿using Entity.Dtos.Auth;
+﻿using Entity.Dtos._01_Auth.DataAuth;
+using Entity.Dtos.Auth;
 using LogicDomain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
