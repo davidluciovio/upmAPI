@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="00_DataUPM\" />
+    <Folder Include="ModelServices\00_DataUPM\" />
+    <Folder Include="ApplicationServices\" />
   </ItemGroup>
 
 </Project>

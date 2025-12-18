@@ -16,6 +16,7 @@ namespace LogicData.Context
         {
         }
 
+        public DbSet<DataProductionDowntime> ProductionDowntimes { get; set; }
         public DbSet<DataProductionModel> ProductionModels { get; set; }
         public DbSet<DataProductionLocation> ProductionLocations { get; set; }
         public DbSet<DataProductionPartNumber> ProductionPartNumbers { get; set; }
@@ -28,6 +29,16 @@ namespace LogicData.Context
         {
             builder.HasDefaultSchema("upm_data");
             base.OnModelCreating(builder);
+
+            builder.Entity<DataProductionDowntime>(entity =>
+            {
+                entity.ToTable("ProductionDowntime");
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.DowntimeDescription).IsUnique();
+
+                entity.Property(e => e.DowntimeDescription).IsRequired();
+            });
+
 
             builder.Entity<DataProductionModel>(entity =>
             {

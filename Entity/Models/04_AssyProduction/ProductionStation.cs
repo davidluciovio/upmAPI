@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entity.Models._04_AssyProduction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,5 +24,7 @@ namespace Entity.Models.AssyProduction
         public float NetoTime { get; set; }
         public int OperatorQuantity { get; set; }
         public int PartNumberQuantity { get; set; }
+
+        public virtual ICollection<ProductionRegister> PrductionRegisters { get; set; } = new List<ProductionRegister>();
     }
 }

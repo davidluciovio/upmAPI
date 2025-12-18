@@ -8,6 +8,7 @@ using Entity.Dtos.AssyProduction;
 using Entity.Dtos.DataProduction.DataProductionLine;
 using Entity.Dtos.ProductionControl;
 using Entity.Interfaces;
+using Entity.ModelDtos._02_DataProduction.DataProductionDowntime;
 using Entity.Models.Auth;
 using LogicData.Context;
 using LogicDomain;
@@ -15,6 +16,7 @@ using LogicDomain._00_DataUPM;
 using LogicDomain._01_Auth;
 using LogicDomain._04_AssyProduction;
 using LogicDomain.DataProduction;
+using LogicDomain.ModelServices._02_DataProduction;
 using LogicDomain.ProductionControl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -178,6 +180,7 @@ builder.Services.AddScoped<IServiceCrud<DataSecurityUserDto, DataSecurityUserCre
 builder.Services.AddScoped<IService<DataSecurityRoleResponseDto, DataSecurityRoleRequestDto>, DataSecurityRoleService>();
 builder.Services.AddScoped<IService<DataSecurityModuleResponseDto, DataSecurityModuleRequestDto>, DataSecurityModuleService>();
 builder.Services.AddScoped<IService<DataSecuritySubmoduleResponseDto, DataSecuritySubmoduleRequestDto>, DataSecuritySubmoduleService>();
+builder.Services.AddScoped<IService<DataProductionDowntimeResponseDto, DataProductionDowntimeRequestDto>, DataProductionDowntimeService>();
 builder.Services.AddScoped<IService<DataSecurityPermissionResponseDto, DataSecurityPermissionRequestDto>, DataSecurityPermissionService>();
 builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, DataSecurityRoleClaimRequestDto>, DataSecurityRoleClaimService>();
 
