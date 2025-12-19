@@ -13,7 +13,6 @@
   <ItemGroup>
     <Folder Include="ModelDtos\00_DataUPM\" />
     <Folder Include="ModelDtos\04_AssyProduction\ProductionRegister\" />
-    <Folder Include="AplicationDtos\" />
   </ItemGroup>
 
 </Project>

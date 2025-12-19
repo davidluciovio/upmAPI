@@ -15,6 +15,7 @@ using LogicDomain;
 using LogicDomain._00_DataUPM;
 using LogicDomain._01_Auth;
 using LogicDomain._04_AssyProduction;
+using LogicDomain.ApplicationServices;
 using LogicDomain.DataProduction;
 using LogicDomain.ModelServices._02_DataProduction;
 using LogicDomain.ProductionControl;
@@ -69,6 +70,13 @@ builder.Services.AddDbContext<AssyProductionContext>(options =>
     {
         // Le decimos que guarde sus migraciones en una tabla con sufijo
         sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_AssyProduction");
+    }));
+
+builder.Services.AddDbContext<TemporalContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        // Le decimos que guarde sus migraciones en una tabla con sufijo
+        sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_Temporal");
     }));
 
 //***************************************************************************************************
@@ -189,7 +197,9 @@ builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateD
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 
-builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
+builder.Services.AddScoped<ProductionStationService>();
+
+builder.Services.AddScoped<ProductionAchievementService>();
 
 //***************************************************************************************************
 //***************************************************************************************************
