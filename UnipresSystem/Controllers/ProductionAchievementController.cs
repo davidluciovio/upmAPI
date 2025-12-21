@@ -15,7 +15,7 @@ namespace UnipresSystem.Controllers
             _productionAchievementService = productionAchievementService;
         }
 
-        [HttpPost]
+        [HttpPost("v1/post-production-achievement")]
         public async Task<IActionResult> GetProductionAchievement([FromBody] ProductionAchievementRequestDto request)
         {
             if (!ModelState.IsValid)

@@ -10,5 +10,9 @@ namespace Entity.AplicationDtos._01_ProductionAcvhievementDtos
     {
         public DateTime StarDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string? PartNumberName { get; set; }
+        public string? Area { get; set; }
+        public string? Leader { get; set; }
+        public string? Supervisor { get; set; }
     }
 }

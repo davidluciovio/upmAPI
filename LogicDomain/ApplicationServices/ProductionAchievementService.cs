@@ -20,12 +20,33 @@ namespace LogicDomain.ApplicationServices
 
         public async Task<List<ProductionAchievementResponseDto.ProductionReportDto>> GetProductionAchievement(ProductionAchievementRequestDto request)
         {
-            var query = await _temporalContext.ProductionAchievements
-                .Where(pa => pa.ProductionDate >= request.StarDate && pa.ProductionDate <= request.EndDate)
-                .ToListAsync();
+            var query = _temporalContext.ProductionAchievements
+                .Where(pa => pa.ProductionDate >= request.StarDate && pa.ProductionDate <= request.EndDate);
 
-            var groupedData = query
-                .GroupBy(pa => pa.PartNumberId)
+            if (!string.IsNullOrEmpty(request.PartNumberName))
+            {
+                query = query.Where(pa => pa.PartNumberName == request.PartNumberName);
+            }
+
+            if (!string.IsNullOrEmpty(request.Area))
+            {
+                query = query.Where(pa => pa.Area == request.Area);
+            }
+
+            if (!string.IsNullOrEmpty(request.Leader))
+            {
+                query = query.Where(pa => pa.Leader == request.Leader);
+            }
+
+            if (!string.IsNullOrEmpty(request.Supervisor))
+            {
+                query = query.Where(pa => pa.Supervisor == request.Supervisor);
+            }
+            
+            var result = await query.ToListAsync();
+
+            var groupedData = result
+                .GroupBy(pa => pa.PartNumberName)
                 .Select(g => new ProductionAchievementResponseDto.ProductionReportDto
                 {
                     PartInfo = new ProductionAchievementResponseDto.PartInfoDto
