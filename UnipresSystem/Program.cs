@@ -190,6 +190,7 @@ builder.Services.AddScoped<IService<DataSecurityModuleResponseDto, DataSecurityM
 builder.Services.AddScoped<IService<DataSecuritySubmoduleResponseDto, DataSecuritySubmoduleRequestDto>, DataSecuritySubmoduleService>();
 builder.Services.AddScoped<IService<DataProductionDowntimeResponseDto, DataProductionDowntimeRequestDto>, DataProductionDowntimeService>();
 builder.Services.AddScoped<IService<DataSecurityPermissionResponseDto, DataSecurityPermissionRequestDto>, DataSecurityPermissionService>();
+
 builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, DataSecurityRoleClaimRequestDto>, DataSecurityRoleClaimService>();
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
@@ -197,11 +198,12 @@ builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateD
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 
-builder.Services.AddScoped<ProductionStationService>();
+builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 
 builder.Services.AddScoped<ProductionAchievementService>();
+builder.Services.AddScoped<OperationalEfficiencyService>();
 
-//***************************************************************************************************
+//**************************************************************** ***********************************
 //***************************************************************************************************
 
 

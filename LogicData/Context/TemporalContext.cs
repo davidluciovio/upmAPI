@@ -21,6 +21,7 @@ namespace LogicData.Context
         }
 
         public DbSet<ProductionAchievement> ProductionAchievements { get; set; }
+        public DbSet<OperationalEfficiency> OperationalEfficiencies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -30,6 +31,19 @@ namespace LogicData.Context
             builder.Entity<ProductionAchievement>(entity =>
             {
                 entity.ToTable("ProductionAchievement");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+
+                entity.Property(e => e.Supervisor).HasMaxLength(100);
+                entity.Property(e => e.Leader).HasMaxLength(100);
+                entity.Property(e => e.Shift).HasMaxLength(50);
+                entity.Property(e => e.PartNumberName).HasMaxLength(200);
+            });
+
+            builder.Entity<OperationalEfficiency>(entity =>
+            {
+                entity.ToTable("OperationalEfficiency");
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
