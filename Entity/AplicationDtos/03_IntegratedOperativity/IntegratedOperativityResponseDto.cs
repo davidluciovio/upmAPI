@@ -65,15 +65,6 @@
             public float Achievement { get; set; }
             public int RealProduction { get; set; }
             public int ObjetiveProduction { get; set; }
-            public float HPTime { get; set; }
-            public float RealTime { get; set; }
-            public float OperativityPercent { get; set; }
-            public float TotalTime { get; set; }
-            public float ProgramabeDowntimeTime { get; set; }
-            public float RealWorkingTime { get; set; }
-            public float TotalDowntime { get; set; }
-            public float NoProgramabeDowntimeTime { get; set; }
-            public float NoReportedTime { get; set; }
         }
     }
 

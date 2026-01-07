@@ -54,7 +54,7 @@ namespace LogicDomain.ApplicationServices
                 query = query.Where(x => x.Shift == request.Shift);
             }
 
-            var flatData = await query.ToListAsync();
+            var flatData = await query.Where(p => p.OperativityPercent != 0).ToListAsync();
 
             // 2. Agrupación Multinivel: Lider > Parte > Area > Supervisor
             var grouped = flatData

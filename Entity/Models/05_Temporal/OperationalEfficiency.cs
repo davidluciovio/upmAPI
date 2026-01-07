@@ -41,5 +41,15 @@ namespace Entity.Models._05_Temporal
         public float NoProgramableDowntimePercent { get; set; }
         public float ProgramableDowntimePercent { get; set; }
 
+        public float Stroke { get; set; }
+        public float TT { get; set; }
+        public float Junta { get; set; }
+        public float Pilotaje { get; set; }
+        public float TTT { get; set; }
+        public float SPM_Real { get; set; }
+        public float SPM_Set { get; set; }
+        public float ST_SPM_Set { get; set; }
+        public float Aprov { get; set; }
+
     }
 }

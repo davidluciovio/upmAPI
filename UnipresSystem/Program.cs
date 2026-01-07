@@ -203,6 +203,7 @@ builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationC
 builder.Services.AddScoped<ProductionAchievementService>();
 builder.Services.AddScoped<OperationalEfficiencyService>();
 builder.Services.AddScoped<IntegratedOperativityService>();
+builder.Services.AddScoped<OperationalAnalysisService>();
 
 //**************************************************************** ***********************************
 //***************************************************************************************************
