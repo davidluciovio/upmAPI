@@ -23,6 +23,7 @@ namespace LogicData.Context
 
         public DbSet<ProductionStation> ProductionStations { get; set; }
         public DbSet<ProductionRegister> ProductionRegisters { get; set; }
+        public DbSet<DowntimeRegister> DowntimeRegisters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,6 +51,14 @@ namespace LogicData.Context
                 
                 entity.HasOne(e => e.ProductionStation).WithMany(ps => ps.PrductionRegisters).HasForeignKey(e => e.ProductionStationId);
 
+            });
+
+            builder.Entity<DowntimeRegister>(entity =>
+            {
+                entity.ToTable("DowntimeRegister");
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.ProductionStation).WithMany(ps => ps.DowntimeRegisters).HasForeignKey(e => e.ProductionStationId);
             });
         }
     }

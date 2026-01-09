@@ -26,5 +26,6 @@ namespace Entity.Models.AssyProduction
         public int PartNumberQuantity { get; set; }
 
         public virtual ICollection<ProductionRegister> PrductionRegisters { get; set; } = new List<ProductionRegister>();
+        public virtual ICollection<DowntimeRegister> DowntimeRegisters { get; set; } = new List<DowntimeRegister>();
     }
 }

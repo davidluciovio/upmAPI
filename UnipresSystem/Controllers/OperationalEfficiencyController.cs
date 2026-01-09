@@ -26,5 +26,17 @@ namespace UnipresSystem.Controllers
             var result = await _operationalEfficiencyService.GetGroupedProductionAsync(request);
             return Ok(result);
         }
+
+        [HttpPost("v1/get-processed-efficiency")]
+        public async Task<IActionResult> GetProcessedEfficiency([FromBody] OperationalEfficiencyRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _operationalEfficiencyService.GetProcessedEfficiencyAsync(request);
+            return Ok(result);
+        }
     }
 }

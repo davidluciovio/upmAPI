@@ -26,5 +26,17 @@ namespace UnipresSystem.Controllers
             var result = await _productionAchievementService.GetProductionAchievement(request);
             return Ok(result);
         }
+
+        [HttpPost("v1/get-processed-achievement")]
+        public async Task<IActionResult> GetProcessedAchievement([FromBody] ProductionAchievementRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _productionAchievementService.GetProcessedAchievementAsync(request);
+            return Ok(result);
+        }
     }
 }
