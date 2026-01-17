@@ -8,6 +8,8 @@ namespace Entity.AplicationDtos.OperationalAnalysis
 {
     public class OperationalAnalysisRequestDto
     {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public List<string> Leaders { get; set; } = new List<string>();
         public List<string> PartNumbers { get; set; } = new List<string>();
         public List<string> Areas { get; set; } = new List<string>();

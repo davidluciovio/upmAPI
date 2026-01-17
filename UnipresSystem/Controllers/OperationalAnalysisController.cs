@@ -23,5 +23,12 @@ namespace UnipresSystem.Controllers
         {
             return View();
         }
+
+        [HttpPost("v1/get-operational-analysis-data")]
+        public async Task<IActionResult> GetOperationalAnalysisData([FromBody] Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisRequestDto request)
+        {
+            var result = await _operationalAnalysisService.GetOperationalAnalysisData(request);
+            return Ok(result);
+        }
     }
 }
