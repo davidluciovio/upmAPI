@@ -1,4 +1,6 @@
-﻿namespace Entity.AplicationDtos.OperationalAnalysis
+﻿using static Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto.AreaOperativityDayTrend;
+
+namespace Entity.AplicationDtos.OperationalAnalysis
 {
     public class OperationalAnalysisResponseDto
     {
@@ -6,7 +8,8 @@
         public List<SupervisorOperativityData> Supervisors { get; set; } = new List<SupervisorOperativityData>();
         public List<PartNumberOperativityData> PartNumbers { get; set; } = new List<PartNumberOperativityData>();
         public List<AreaOperativityDayTrend> AreaOperativityDayTrends { get; set; } = new List<AreaOperativityDayTrend>();
-
+        public List<SupervisorOperativityDayHeatMap> SupervisorOperativityDayHeatMaps { get; set; } = new List<SupervisorOperativityDayHeatMap>();
+        public List<AnnualAreaTrend> AnnualAreaTrends { get; set; } = new List<AnnualAreaTrend>();
         public class KPICardsData
         {
             public string Area { get; set; } = string.Empty;
@@ -35,18 +38,47 @@
             public string Supervisor { get; set; } = string.Empty;
             public string Leader { get; set; } = string.Empty;
             public double Operativity { get; set; }
+            public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+
         }
 
         public class AreaOperativityDayTrend
         {
             public string Area { get; set; } = string.Empty;
             public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+        }
+        public class SupervisorOperativityDayHeatMap
+        {
+            public string Supervisor { get; set; } = string.Empty;
+            public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+            public List<LeaderOperativityData> Leaders { get; set; } = new List<LeaderOperativityData>();
 
-            public class DayOperativity
+            public class LeaderOperativityData
             {
-                public DateTime Day { get; set; }
-                public double Operativity { get; set; }
+                public string Leader { get; set; } = string.Empty;
+                public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+
             }
+        }
+
+        public class AnnualAreaTrend
+        {
+            public string Area { get; set; } = string.Empty;
+            public List<MonthOperativity> Months { get; set; } = new List<MonthOperativity>();
+        }
+
+        public class MonthOperativity
+        {
+            public int Year { get; set; }
+            public int Month { get; set; }
+            public string MonthName { get; set; } = string.Empty; // Opcional, útil para gráficas
+            public double Operativity { get; set; }
+        }
+
+        public class DayOperativity
+        {
+            public DateTime Day { get; set; }
+            public double Operativity { get; set; }
         }
     }
 

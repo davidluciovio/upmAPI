@@ -13,7 +13,7 @@ namespace LogicDomain.ApplicationServices
         }
 
         public async Task<OperationalAnalysisRequestDto> GetFiltersData()
-        { 
+        {
             var leaders = await _temporalContext.OperationalEfficiencies
                 .Select(x => x.Leader)
                 .Distinct()
@@ -49,10 +49,30 @@ namespace LogicDomain.ApplicationServices
 
         public async Task<OperationalAnalysisResponseDto> GetOperationalAnalysisData(OperationalAnalysisRequestDto request)
         {
-            // 1. Construimos la query base (esto no ejecuta nada todavía)
+            // ---------------------------------------------------------
+            // 1. Construcción de Query Base y Filtros
+            // ---------------------------------------------------------
             var query = _temporalContext.OperationalEfficiencies
                 .Where(data => data.ProductionDate >= request.StartDate && data.ProductionDate <= request.EndDate)
                 .AsQueryable();
+
+            // Rango de Días (para gráficas diarias)
+            var allDays = new List<DateTime>();
+            for (var date = request.StartDate; date <= request.EndDate; date = date.AddDays(1))
+            {
+                allDays.Add(date);
+            }
+
+            // Rango de Meses (para la NUEVA gráfica anual)
+            // Calculamos el primer día del mes de inicio y el primer día del mes de fin
+            var startMonth = new DateTime(request.StartDate.Year, request.StartDate.Month, 1);
+            var endMonth = new DateTime(request.EndDate.Year, request.EndDate.Month, 1);
+            var allMonths = new List<DateTime>();
+
+            for (var date = startMonth; date <= endMonth; date = date.AddMonths(1))
+            {
+                allMonths.Add(date);
+            }
 
             // Filtros dinámicos
             if (request.Leaders != null && request.Leaders.Any())
@@ -70,7 +90,9 @@ namespace LogicDomain.ApplicationServices
             if (request.Shifts != null && request.Shifts.Any())
                 query = query.Where(x => request.Shifts.Contains(x.Shift));
 
+            // ---------------------------------------------------------
             // 2. KPI Cards
+            // ---------------------------------------------------------
             var kpiCardsData = await query
                 .GroupBy(g => g.Area)
                 .Select(data => new OperationalAnalysisResponseDto.KPICardsData
@@ -78,14 +100,16 @@ namespace LogicDomain.ApplicationServices
                     Area = data.Key,
                     Operativity = data.Average(x => x.OperativityPercent)
                 })
+                .OrderBy(data => data.Area)
                 .ToListAsync();
 
-            // 3. Tabla Supervisores (Nota: Agregué AsSplitQuery si traes muchos datos anidados, opcional)
+            // ---------------------------------------------------------
+            // 3. Tabla Supervisores
+            // ---------------------------------------------------------
             var tableSupervisorsData = await query
                 .GroupBy(g => new { g.Supervisor, g.Area, g.Leader })
                 .Select(data => new
                 {
-                    // Proyección intermedia para evitar problemas de traducción compleja
                     data.Key.Supervisor,
                     data.Key.Area,
                     data.Key.Leader,
@@ -93,14 +117,13 @@ namespace LogicDomain.ApplicationServices
                 })
                 .ToListAsync();
 
-            // Agrupamos en memoria para dar formato de jerarquía (Supervisor -> Leaders)
             var formattedSupervisorsData = tableSupervisorsData
                 .GroupBy(x => new { x.Supervisor, x.Area })
                 .Select(g => new OperationalAnalysisResponseDto.SupervisorOperativityData
                 {
                     Supervisor = g.Key.Supervisor,
                     Area = g.Key.Area,
-                    Operativity = g.Average(x => x.Operativity), // Promedio del supervisor global
+                    Operativity = g.Average(x => x.Operativity),
                     Leaders = g.Select(l => new OperationalAnalysisResponseDto.SupervisorOperativityData.LeaderOperativityData
                     {
                         Leader = l.Leader,
@@ -108,25 +131,35 @@ namespace LogicDomain.ApplicationServices
                     }).ToList()
                 }).ToList();
 
-            // 4. Tabla Part Numbers
-            var tablePartNumberData = await query
-                .GroupBy(g => new { g.PartNumberName, g.Area, g.Supervisor, g.Leader })
-                .Select(data => new OperationalAnalysisResponseDto.PartNumberOperativityData
+            // ---------------------------------------------------------
+            // PREPARACIÓN DE DATOS CRUDOS (Optimización)
+            // ---------------------------------------------------------
+
+            // A. Datos Diarios (PartNumber)
+            var rawPartNumberTrendData = await query
+                .GroupBy(g => new { g.PartNumberName, g.ProductionDate })
+                .Select(g => new
                 {
-                    PartNumber = data.Key.PartNumberName,
-                    Area = data.Key.Area,
-                    Supervisor = data.Key.Supervisor,
-                    Leader = data.Key.Leader,
-                    Operativity = data.Average(x => x.OperativityPercent)
+                    PartNumber = g.Key.PartNumberName,
+                    Date = g.Key.ProductionDate,
+                    AvgOperativity = g.Average(x => x.OperativityPercent)
                 })
                 .ToListAsync();
 
-            // 5. Trend Chart (Días) - OPTIMIZADO
-            // Problema original: Intentabas iterar 'days' (lista local) dentro de una query SQL. EF Core suele fallar o hacerlo muy lento.
-            // Solución: Traemos los datos crudos agrupados por fecha y rellenamos los ceros en memoria (C#).
+            // B. Datos Diarios (Supervisor)
+            var rawSupervisorTrendData = await query
+                .GroupBy(g => new { g.Supervisor, g.Leader, g.ProductionDate })
+                .Select(g => new
+                {
+                    Supervisor = g.Key.Supervisor,
+                    Leader = g.Key.Leader,
+                    Date = g.Key.ProductionDate,
+                    AvgOperativity = g.Average(x => x.OperativityPercent)
+                })
+                .ToListAsync();
 
-            // Paso A: Traer datos existentes de la DB
-            var rawTrendData = await query
+            // C. Datos Diarios (Area)
+            var rawAreaTrendData = await query
                 .GroupBy(g => new { g.Area, g.ProductionDate })
                 .Select(g => new
                 {
@@ -136,37 +169,134 @@ namespace LogicDomain.ApplicationServices
                 })
                 .ToListAsync();
 
-            // Paso B: Generar rango de días completo
-            var allDays = new List<DateTime>();
-            for (var date = request.StartDate; date <= request.EndDate; date = date.AddDays(1))
-            {
-                allDays.Add(date); // Asumiendo que ProductionDate en DB no tiene horas (Time 00:00:00)
-            }
+            // ---------------------------------------------------------
+            // 4. Tabla Part Numbers
+            // ---------------------------------------------------------
+            var partNumberHeaders = await query
+                .GroupBy(g => new { g.PartNumberName, g.Area, g.Supervisor, g.Leader })
+                .Select(data => new
+                {
+                    data.Key.PartNumberName,
+                    data.Key.Area,
+                    data.Key.Supervisor,
+                    data.Key.Leader,
+                    AvgOperativity = data.Average(x => x.OperativityPercent)
+                })
+                .ToListAsync();
 
-            // Paso C: Cruzar datos en memoria (Cross Join)
-            var distinctAreas = rawTrendData.Select(x => x.Area).Distinct().ToList();
+            var trendsLookup = rawPartNumberTrendData.ToLookup(x => x.PartNumber);
+
+            var tablePartNumberData = partNumberHeaders
+                .Select(header => new OperationalAnalysisResponseDto.PartNumberOperativityData
+                {
+                    PartNumber = header.PartNumberName,
+                    Area = header.Area,
+                    Supervisor = header.Supervisor,
+                    Leader = header.Leader,
+                    Operativity = header.AvgOperativity,
+                    DayOperativities = trendsLookup[header.PartNumberName]
+                        .Select(r => new OperationalAnalysisResponseDto.DayOperativity
+                        {
+                            Day = r.Date,
+                            Operativity = r.AvgOperativity
+                        })
+                        .ToList()
+                })
+                .ToList();
+
+            // ---------------------------------------------------------
+            // 5. Trend Charts (Diarios - Relleno de ceros)
+            // ---------------------------------------------------------
+
+            // A. Area Trends (Diario)
+            var distinctAreas = rawAreaTrendData.Select(x => x.Area).Distinct().ToList();
 
             var areaOperativityDayTrendData = distinctAreas.Select(area => new OperationalAnalysisResponseDto.AreaOperativityDayTrend
             {
                 Area = area,
-                DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.AreaOperativityDayTrend.DayOperativity
+                DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
                 {
                     Day = day,
-                    // Buscamos en memoria si hay dato para ese día/área, si no ponemos 0
-                    Operativity = rawTrendData
-                        .FirstOrDefault(r => r.Area == area && r.Date.Date == day.Date) // .Date para asegurar
+                    Operativity = rawAreaTrendData
+                        .FirstOrDefault(r => r.Area == area && r.Date.Date == day.Date)
                         ?.AvgOperativity ?? 0
                 }).ToList()
             }).ToList();
 
+            // B. Supervisor Heatmaps (Diario)
+            var supervisors = rawSupervisorTrendData.Select(x => x.Supervisor).Distinct().ToList();
 
-            // 6. Armar respuesta
+            var supervisorOperativityDayHeatMap = supervisors.Select(supervisor => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap
+            {
+                Supervisor = supervisor,
+                DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
+                {
+                    Day = day,
+                    Operativity = rawSupervisorTrendData
+                        .FirstOrDefault(r => r.Supervisor == supervisor && r.Date.Date == day.Date)
+                        ?.AvgOperativity ?? 0,
+                }).ToList(),
+                Leaders = rawSupervisorTrendData
+                    .Where(x => x.Supervisor == supervisor)
+                    .Select(x => x.Leader)
+                    .Distinct()
+                    .Select(leader => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap.LeaderOperativityData
+                    {
+                        Leader = leader,
+                        DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
+                        {
+                            Day = day,
+                            Operativity = rawSupervisorTrendData
+                                .FirstOrDefault(r => r.Supervisor == supervisor && r.Leader == leader && r.Date.Date == day.Date)
+                                ?.AvgOperativity ?? 0,
+                        }).ToList()
+                    }).ToList()
+            }).ToList();
+
+            // ---------------------------------------------------------
+            // 6. NUEVA SECCIÓN: Tendencias Mensuales (Anuales)
+            // ---------------------------------------------------------
+
+            // Paso A: Traer datos agrupados por Año y Mes desde DB
+            var rawMonthlyData = await _temporalContext.OperationalEfficiencies
+                .AsQueryable()
+                .GroupBy(x => new { x.Area, x.ProductionDate.Year, x.ProductionDate.Month })
+                .Select(g => new
+                {
+                    Area = g.Key.Area,
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    AvgOperativity = g.Average(x => x.OperativityPercent)
+                })
+                .ToListAsync();
+
+            // Paso B: Cruzar en memoria con la lista completa de meses (allMonths)
+            // Usamos 'distinctAreas' que ya obtuvimos en el paso 5
+            var annualAreaTrends = distinctAreas.Select(area => new OperationalAnalysisResponseDto.AnnualAreaTrend
+            {
+                Area = area,
+                Months = allMonths.Select(m => new OperationalAnalysisResponseDto.MonthOperativity
+                {
+                    Year = m.Year,
+                    Month = m.Month,
+                    MonthName = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(m.Month), // Ej: "Ene", "Feb" (según idioma del servidor)
+                    Operativity = rawMonthlyData
+                        .FirstOrDefault(r => r.Area == area && r.Year == m.Year && r.Month == m.Month)
+                        ?.AvgOperativity ?? 0
+                }).ToList()
+            }).ToList();
+
+            // ---------------------------------------------------------
+            // 7. Retorno Final
+            // ---------------------------------------------------------
             return new OperationalAnalysisResponseDto
             {
                 Cards = kpiCardsData,
                 Supervisors = formattedSupervisorsData,
                 PartNumbers = tablePartNumberData,
-                AreaOperativityDayTrends = areaOperativityDayTrendData
+                AreaOperativityDayTrends = areaOperativityDayTrendData,
+                SupervisorOperativityDayHeatMaps = supervisorOperativityDayHeatMap,
+                AnnualAreaTrends = annualAreaTrends // <--- Nuevo campo
             };
         }
     }
