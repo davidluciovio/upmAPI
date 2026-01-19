@@ -49,6 +49,10 @@ namespace LogicDomain.ApplicationServices
 
         public async Task<OperationalAnalysisResponseDto> GetOperationalAnalysisData(OperationalAnalysisRequestDto request)
         {
+
+            var currentYear = DateTime.Now.Year;
+            var startOfAnnualRange = new DateTime(currentYear - 1, 12, 1); // 1 de Diciembre del año anterior
+            var endOfAnnualRange = new DateTime(currentYear, 12, 31);      // 31 de Diciembre del año actual
             // ---------------------------------------------------------
             // 1. Construcción de Query Base y Filtros
             // ---------------------------------------------------------
@@ -69,7 +73,7 @@ namespace LogicDomain.ApplicationServices
             var endMonth = new DateTime(request.EndDate.Year, request.EndDate.Month, 1);
             var allMonths = new List<DateTime>();
 
-            for (var date = startMonth; date <= endMonth; date = date.AddMonths(1))
+            for (var date = startOfAnnualRange; date <= endOfAnnualRange; date = date.AddMonths(1))
             {
                 allMonths.Add(date);
             }
@@ -258,8 +262,12 @@ namespace LogicDomain.ApplicationServices
             // ---------------------------------------------------------
 
             // Paso A: Traer datos agrupados por Año y Mes desde DB
+            // 1. Calculamos las fechas dinámicamente
+            
+
+            // 2. Usamos estas fechas en el Where en lugar de las del 'request'
             var rawMonthlyData = await _temporalContext.OperationalEfficiencies
-                .AsQueryable()
+                .Where(data => data.ProductionDate >= startOfAnnualRange && data.ProductionDate <= endOfAnnualRange)
                 .GroupBy(x => new { x.Area, x.ProductionDate.Year, x.ProductionDate.Month })
                 .Select(g => new
                 {
