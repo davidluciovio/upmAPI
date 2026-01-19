@@ -16,7 +16,7 @@ namespace LogicData.Context
         {
         }
 
-        //public DbSet<ProductionControlComponentAlert> ComponentAlerts { get; set; }
+        public DbSet<ComponentAlert> ComponentAlerts { get; set; }
         public DbSet<PartNumberLogistics> partNumberLogistics { get; set; }
         public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
 
@@ -51,18 +51,21 @@ namespace LogicData.Context
                 entity.Property(e => e.PartNumberId).IsRequired();
                 entity.Property(e => e.LocationId).IsRequired();
             });
-            //builder.Entity<ProductionControlComponentAlert>()
-            //    .HasOne<DataProductionPartNumber>()
-            //    .WithMany()
-            //    .HasForeignKey(e => e.ProductionPartNumberId)
-            //    .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.Entity<ProductionControlComponentAlert>(entity =>
-            //{
-            //    entity.ToTable("ComponentAlert");
-            //    entity.HasKey(e => e.Id);
+            builder.Entity<ComponentAlert>(entity =>
+            {
+                entity.ToTable("ComponentAlert");
+                entity.HasKey(e => e.Id);
 
-            //});
+                entity.HasIndex(e => e.StatusId);
+
+                entity.Property(e => e.StatusId).IsRequired();
+
+                entity.HasOne(e => e.PartNumberLogistics)
+                      .WithMany(i => i.ComponentAlerts)
+                      .HasForeignKey(e => e.PartNumberLogisticsId);
+
+            });
 
         }
             

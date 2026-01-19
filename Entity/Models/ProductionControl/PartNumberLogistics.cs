@@ -20,5 +20,8 @@ namespace Entity.Models.ProductionControl
         public Guid LocationId { get; set; }
 
         public float SNP { get; set; }
+
+        public virtual ICollection<ComponentAlert> ComponentAlerts { get; set; } = new List<ComponentAlert>();
     }
 }
+

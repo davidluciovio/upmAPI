@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace Entity.Models.ProductionControl
 {
-    public class ProductionControlComponentAlert
+    public class ComponentAlert
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
-
-        public string Component { get; set; } = string.Empty;
-        public string Location { get; set; } = string.Empty;
-        public string SNP { get; set; } = string.Empty;
 
         public string? CompleteBy { get; set; }
         public DateTime? CompleteDate { get; set; }
@@ -27,6 +23,7 @@ namespace Entity.Models.ProductionControl
         public DateTime? CriticalDate { get; set; }
 
         public Guid StatusId { get; set; }
-        public Guid ProductionPartNumberId { get; set; }
+        public virtual PartNumberLogistics PartNumberLogistics { get; set; }
+        public Guid PartNumberLogisticsId { get; set; }
     } 
 }

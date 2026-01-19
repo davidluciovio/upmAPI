@@ -205,6 +205,9 @@ builder.Services.AddScoped<OperationalEfficiencyService>();
 builder.Services.AddScoped<IntegratedOperativityService>();
 builder.Services.AddScoped<OperationalAnalysisService>();
 
+builder.Services.AddScoped<IComponentAlertService, LogicDomain.ModelServices.ComponentAlertService>();
+
+
 //**************************************************************** ***********************************
 //***************************************************************************************************
 
