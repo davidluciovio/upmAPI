@@ -177,13 +177,13 @@ namespace LogicDomain.ApplicationServices
             // 4. Tabla Part Numbers
             // ---------------------------------------------------------
             var partNumberHeaders = await query
-                .GroupBy(g => new { g.PartNumberName, g.Area, g.Supervisor, g.Leader })
+                .GroupBy(g => new { g.PartNumberName, g.Area})
                 .Select(data => new
                 {
                     data.Key.PartNumberName,
                     data.Key.Area,
-                    data.Key.Supervisor,
-                    data.Key.Leader,
+                    data.FirstOrDefault().Supervisor,
+                    data.FirstOrDefault().Leader,
                     AvgOperativity = data.Average(x => x.OperativityPercent)
                 })
                 .ToListAsync();
