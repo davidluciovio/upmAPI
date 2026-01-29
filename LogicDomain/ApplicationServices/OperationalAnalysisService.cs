@@ -1,6 +1,8 @@
 ﻿using Entity.AplicationDtos.OperationalAnalysis;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace LogicDomain.ApplicationServices
 {
@@ -182,8 +184,8 @@ namespace LogicDomain.ApplicationServices
                 {
                     data.Key.PartNumberName,
                     data.Key.Area,
-                    data.FirstOrDefault().Supervisor,
-                    data.FirstOrDefault().Leader,
+                    data.FirstOrDefault()!.Supervisor,
+                    data.FirstOrDefault()!.Leader,
                     AvgOperativity = data.Average(x => x.OperativityPercent)
                 })
                 .ToListAsync();
@@ -306,6 +308,48 @@ namespace LogicDomain.ApplicationServices
                 SupervisorOperativityDayHeatMaps = supervisorOperativityDayHeatMap,
                 AnnualAreaTrends = annualAreaTrends // <--- Nuevo campo
             };
+        }
+
+        public async IAsyncEnumerable<string> GetOperationalAnalysisStream([EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"\\upmap11\c$\UPM\ProductionData\XSLXtoCSV.exe",
+                Arguments = "",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = new Process { StartInfo = startInfo };
+
+            process.Start();
+
+            // Leemos la salida línea por línea en lugar de esperar al final
+            while (!process.StandardOutput.EndOfStream)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    process.Kill();
+                    yield break;
+                }
+
+                string? line = await process.StandardOutput.ReadLineAsync();
+                if (line != null)
+                {
+                    yield return line; // Enviamos la línea al cliente inmediatamente
+                }
+            }
+
+            // También capturamos errores si los hay
+            if (!process.StandardError.EndOfStream)
+            {
+                string error = await process.StandardError.ReadToEndAsync();
+                if (!string.IsNullOrEmpty(error)) yield return $"[ERROR]: {error}";
+            }
+
+            await process.WaitForExitAsync(cancellationToken);
         }
     }
 }

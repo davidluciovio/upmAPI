@@ -7,7 +7,7 @@ namespace Entity.Dtos._00_DataUPM
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public string RoleId { get; set; }
+        public string RoleId { get; set; } = string.Empty;
         public string CreateBy { get; set; } = string.Empty;
     }
 }

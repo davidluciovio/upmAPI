@@ -2,21 +2,21 @@ namespace Entity.AplicationDtos._02_OperationalEfficiencyDtos
 {
     public class OperationalEfficiencyDashboardDto
     {
-        public StatsPayload Stats { get; set; }
-        public List<string> Dates { get; set; }
-        public List<SupervisorHierarchyNode> Hierarchy { get; set; }
-        public List<PartKpi> Parts { get; set; }
+        public StatsPayload? Stats { get; set; }
+        public List<string>? Dates { get; set; }
+        public List<SupervisorHierarchyNode>? Hierarchy { get; set; }
+        public List<PartKpi>? Parts { get; set; }
     }
 
     public class StatsPayload
     {
-        public DashboardKpis Kpis { get; set; }
-        public Dictionary<string, DateMapAccumulator> DateMap { get; set; }
-        public Dictionary<string, Dictionary<string, DateMapAccumulator>> AreaDateMap { get; set; }
-        public Dictionary<string, Dictionary<string, DateMapAccumulator>> LeaderDateMap { get; set; }
-        public Dictionary<string, Dictionary<string, DateMapAccumulator>> SupervisorDateMap { get; set; }
-        public Dictionary<string, DateMapAccumulator> ShiftMap { get; set; }
-        public Dictionary<string, float> LeaderDownMap { get; set; }
+        public DashboardKpis? Kpis { get; set; }
+        public Dictionary<string, DateMapAccumulator>? DateMap { get; set; }
+        public Dictionary<string, Dictionary<string, DateMapAccumulator>>? AreaDateMap { get; set; }
+        public Dictionary<string, Dictionary<string, DateMapAccumulator>>? LeaderDateMap { get; set; }
+        public Dictionary<string, Dictionary<string, DateMapAccumulator>>? SupervisorDateMap { get; set; }
+        public Dictionary<string, DateMapAccumulator>? ShiftMap { get; set; }
+        public Dictionary<string, float>? LeaderDownMap { get; set; }
     }
 
     public class DashboardKpis
@@ -37,20 +37,20 @@ namespace Entity.AplicationDtos._02_OperationalEfficiencyDtos
 
     public class SupervisorHierarchyNode
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public float Operativity { get; set; }
-        public List<LeaderHierarchyNode> Leaders { get; set; }
+        public List<LeaderHierarchyNode>? Leaders { get; set; }
     }
 
     public class LeaderHierarchyNode
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public float Operativity { get; set; }
     }
 
     public class PartKpi
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public float Operativity { get; set; }
     }
 }

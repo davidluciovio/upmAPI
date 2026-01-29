@@ -23,7 +23,7 @@ namespace Entity.Models.ProductionControl
         public DateTime? CriticalDate { get; set; }
 
         public Guid StatusId { get; set; }
-        public virtual PartNumberLogistics PartNumberLogistics { get; set; }
+        public virtual PartNumberLogistics? PartNumberLogistics { get; set; }
         public Guid PartNumberLogisticsId { get; set; }
     } 
 }

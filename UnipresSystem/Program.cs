@@ -14,7 +14,7 @@ using LogicData.Context;
 using LogicDomain;
 using LogicDomain._00_DataUPM;
 using LogicDomain._01_Auth;
-using LogicDomain._04_AssyProduction;
+using LogicDomain.AssyProduction;
 using LogicDomain.ApplicationServices;
 using LogicDomain.DataProduction;
 using LogicDomain.ModelServices._02_DataProduction;
@@ -194,16 +194,12 @@ builder.Services.AddScoped<IService<DataSecurityPermissionResponseDto, DataSecur
 builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, DataSecurityRoleClaimRequestDto>, DataSecurityRoleClaimService>();
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
-
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
-
 builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 
-builder.Services.AddScoped<ProductionAchievementService>();
-builder.Services.AddScoped<OperationalEfficiencyService>();
-builder.Services.AddScoped<IntegratedOperativityService>();
 builder.Services.AddScoped<OperationalAnalysisService>();
+builder.Services.AddScoped<DowntimeCaptureService>();
 
 builder.Services.AddScoped<IComponentAlertService, LogicDomain.ModelServices.ComponentAlertService>();
 

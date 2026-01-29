@@ -10,13 +10,7 @@ namespace Entity.AplicationDtos.DowntimeCapture
     {
         public DateTime StartDatetime { get; set; }
         public DateTime EndDatetime { get; set; }
+        public string LineDescription { get; set; } = string.Empty;
 
-        public List<ProductionStation> ProductionStations { get; set; } = new List<ProductionStation>();
-
-        public class ProductionStation
-        {
-            public Guid LineId { get; set; }
-            public Guid ModelId { get; set; }
-        }
     }
 }

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
 
-namespace LogicDomain._04_AssyProduction
+namespace LogicDomain.AssyProduction
 {
     public class ProductionStationService : IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>
     {

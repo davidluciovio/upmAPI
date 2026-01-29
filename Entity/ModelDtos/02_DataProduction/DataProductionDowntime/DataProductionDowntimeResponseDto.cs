@@ -6,9 +6,9 @@ namespace Entity.ModelDtos._02_DataProduction.DataProductionDowntime
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
-        public string DowntimeDescription { get; set; }
-        public string InforCode { get; set; }
-        public string PLCCode { get; set; }
+        public string DowntimeDescription { get; set; } = string.Empty;
+        public string InforCode { get; set; } = string.Empty;
+        public string PLCCode { get; set; } = string.Empty;
         public bool IsDirectDowntime { get; set; }
         public bool Programable { get; set; }
     }
