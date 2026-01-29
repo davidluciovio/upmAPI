@@ -15,6 +15,8 @@ namespace Entity.Models._05_Temporal
 
         public DateTime ProductionDate { get; set; }
         public string Area { get; set; } = string.Empty;
+        public string Managment { get; set; } = string.Empty;
+        public string Jefe { get; set; } = string.Empty;
         public string Supervisor { get; set; } = string.Empty;
         public string Leader { get; set; } = string.Empty;
         public string Shift { get; set; } = string.Empty;

@@ -3,6 +3,7 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security;
 
 namespace LogicDomain.ApplicationServices
 {
@@ -312,6 +313,9 @@ namespace LogicDomain.ApplicationServices
 
         public async IAsyncEnumerable<string> GetOperationalAnalysisStream([EnumeratorCancellation] CancellationToken cancellationToken)
         {
+            var password = new SecureString();
+            foreach (char c in "N3g1T0r01107") password.AppendChar(c);
+
             var startInfo = new ProcessStartInfo
             {
                 FileName = @"\\upmap11\c$\UPM\ProductionData\XSLXtoCSV.exe",
@@ -319,7 +323,13 @@ namespace LogicDomain.ApplicationServices
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+
+                // Configuración de Identidad
+                UserName = "Administrator",
+                Password = password,
+                Domain = "NombreDominioOEquipo", // O "." para local
+                LoadUserProfile = true
             };
 
             using var process = new Process { StartInfo = startInfo };
