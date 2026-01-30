@@ -5,10 +5,10 @@ namespace Entity.AplicationDtos.OperationalAnalysis
     public class OperationalAnalysisResponseDto
     {
         public List<KPICardsData> Cards { get; set; } = new List<KPICardsData>();
-        public List<SupervisorOperativityData> Supervisors { get; set; } = new List<SupervisorOperativityData>();
+        public List<ManagmentOperativityData> Managments { get; set; } = new List<ManagmentOperativityData>();
         public List<PartNumberOperativityData> PartNumbers { get; set; } = new List<PartNumberOperativityData>();
         public List<AreaOperativityDayTrend> AreaOperativityDayTrends { get; set; } = new List<AreaOperativityDayTrend>();
-        public List<SupervisorOperativityDayHeatMap> SupervisorOperativityDayHeatMaps { get; set; } = new List<SupervisorOperativityDayHeatMap>();
+        //public List<SupervisorOperativityDayHeatMap> SupervisorOperativityDayHeatMaps { get; set; } = new List<SupervisorOperativityDayHeatMap>();
         public List<AnnualAreaTrend> AnnualAreaTrends { get; set; } = new List<AnnualAreaTrend>();
         public class KPICardsData
         {
@@ -16,18 +16,32 @@ namespace Entity.AplicationDtos.OperationalAnalysis
             public double Operativity { get; set; }
         }
 
-        public class SupervisorOperativityData
+        public class ManagmentOperativityData
         {
-            public string Supervisor { get; set; } = string.Empty;
+            public string Managment { get; set; } = string.Empty;
             public string Area { get; set; } = string.Empty;
             public double Operativity { get; set; }
 
-            public List<LeaderOperativityData> Leaders { get; set; } = new List<LeaderOperativityData>();
+            public List<JefeOperativityData> Jefes { get; set; } = new List<JefeOperativityData>();
 
-            public class LeaderOperativityData
+            public class JefeOperativityData
             {
-                public string Leader { get; set; } = string.Empty;
+                public string Jefe { get; set; } = string.Empty;
                 public double Operativity { get; set; }
+                public List<SupervisorOperativityData> Supervisors { get; set; } = new List<SupervisorOperativityData>();
+                public class SupervisorOperativityData
+                {
+                    public string Supervisor { get; set; } = string.Empty;
+                    public double Operativity { get; set; }
+
+                    public List<LeaderOperativityData> Leaders { get; set; } = new List<LeaderOperativityData>();
+
+                    public class LeaderOperativityData
+                    {
+                        public string Leader { get; set; } = string.Empty;
+                        public double Operativity { get; set; }
+                    }
+                }
             }
         }
 
@@ -47,19 +61,19 @@ namespace Entity.AplicationDtos.OperationalAnalysis
             public string Area { get; set; } = string.Empty;
             public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
         }
-        public class SupervisorOperativityDayHeatMap
-        {
-            public string Supervisor { get; set; } = string.Empty;
-            public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
-            public List<LeaderOperativityData> Leaders { get; set; } = new List<LeaderOperativityData>();
+        //public class SupervisorOperativityDayHeatMap
+        //{
+        //    public string Supervisor { get; set; } = string.Empty;
+        //    public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+        //    public List<LeaderOperativityData> Leaders { get; set; } = new List<LeaderOperativityData>();
 
-            public class LeaderOperativityData
-            {
-                public string Leader { get; set; } = string.Empty;
-                public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+        //    public class LeaderOperativityData
+        //    {
+        //        public string Leader { get; set; } = string.Empty;
+        //        public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
 
-            }
-        }
+        //    }
+        //}
 
         public class AnnualAreaTrend
         {

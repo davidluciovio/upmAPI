@@ -11,9 +11,9 @@ namespace Entity.AplicationDtos.OperationalAnalysis
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<string> Leaders { get; set; } = new List<string>();
-        public List<string> PartNumbers { get; set; } = new List<string>();
+        public List<string> Managments { get; set; } = new List<string>();
         public List<string> Areas { get; set; } = new List<string>();
         public List<string> Supervisors { get; set; } = new List<string>();
-        public List<string> Shifts { get; set; } = new List<string>();
+        public List<string> Jefes { get; set; } = new List<string>();
     }
 }

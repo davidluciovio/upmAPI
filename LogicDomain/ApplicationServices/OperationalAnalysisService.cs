@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security;
+using static Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto;
 
 namespace LogicDomain.ApplicationServices
 {
@@ -21,8 +22,8 @@ namespace LogicDomain.ApplicationServices
                 .Select(x => x.Leader)
                 .Distinct()
                 .ToListAsync();
-            var partNumbers = await _temporalContext.OperationalEfficiencies
-                .Select(x => x.PartNumberName)
+            var managments = await _temporalContext.OperationalEfficiencies
+                .Select(x => x.Managment)
                 .Distinct()
                 .ToListAsync();
             var areas = await _temporalContext.OperationalEfficiencies
@@ -33,18 +34,18 @@ namespace LogicDomain.ApplicationServices
                 .Select(x => x.Supervisor)
                 .Distinct()
                 .ToListAsync();
-            var shifts = await _temporalContext.OperationalEfficiencies
-                .Select(x => x.Shift)
+            var jefes = await _temporalContext.OperationalEfficiencies
+                .Select(x => x.Jefe)
                 .Distinct()
                 .ToListAsync();
 
             var result = new OperationalAnalysisRequestDto
             {
                 Leaders = leaders,
-                PartNumbers = partNumbers,
+                Managments = managments,
                 Areas = areas,
                 Supervisors = supervisors,
-                Shifts = shifts
+                Jefes = jefes
             };
 
             return result;
@@ -85,8 +86,8 @@ namespace LogicDomain.ApplicationServices
             if (request.Leaders != null && request.Leaders.Any())
                 query = query.Where(x => request.Leaders.Contains(x.Leader));
 
-            if (request.PartNumbers != null && request.PartNumbers.Any())
-                query = query.Where(x => request.PartNumbers.Contains(x.PartNumberName));
+            if (request.Managments != null && request.Managments.Any())
+                query = query.Where(x => request.Managments.Contains(x.Managment));
 
             if (request.Areas != null && request.Areas.Any())
                 query = query.Where(x => request.Areas.Contains(x.Area));
@@ -94,8 +95,8 @@ namespace LogicDomain.ApplicationServices
             if (request.Supervisors != null && request.Supervisors.Any())
                 query = query.Where(x => request.Supervisors.Contains(x.Supervisor));
 
-            if (request.Shifts != null && request.Shifts.Any())
-                query = query.Where(x => request.Shifts.Contains(x.Shift));
+            if (request.Jefes != null && request.Jefes.Any())
+                query = query.Where(x => request.Jefes.Contains(x.Jefe));
 
             // ---------------------------------------------------------
             // 2. KPI Cards
@@ -113,29 +114,64 @@ namespace LogicDomain.ApplicationServices
             // ---------------------------------------------------------
             // 3. Tabla Supervisores
             // ---------------------------------------------------------
-            var tableSupervisorsData = await query
-                .GroupBy(g => new { g.Supervisor, g.Area, g.Leader })
+            var tableRawData = await query
+                .GroupBy(g => new
+                {
+                    g.Managment,
+                    g.Area,
+                    g.Jefe,
+                    g.Supervisor,
+                    g.Leader
+                })
                 .Select(data => new
                 {
-                    data.Key.Supervisor,
+                    data.Key.Managment,
                     data.Key.Area,
+                    data.Key.Jefe,
+                    data.Key.Supervisor,
                     data.Key.Leader,
+                    // Calculamos el promedio base por líder
                     Operativity = data.Average(x => x.OperativityPercent)
                 })
                 .ToListAsync();
 
-            var formattedSupervisorsData = tableSupervisorsData
-                .GroupBy(x => new { x.Supervisor, x.Area })
-                .Select(g => new OperationalAnalysisResponseDto.SupervisorOperativityData
+            var formattedManagmentData = tableRawData
+                // Nivel 1: Agrupar por Gerencia y Area
+                .GroupBy(x => new { x.Managment, x.Area })
+                .Select(gMgmt => new ManagmentOperativityData
                 {
-                    Supervisor = g.Key.Supervisor,
-                    Area = g.Key.Area,
-                    Operativity = g.Average(x => x.Operativity),
-                    Leaders = g.Select(l => new OperationalAnalysisResponseDto.SupervisorOperativityData.LeaderOperativityData
-                    {
-                        Leader = l.Leader,
-                        Operativity = l.Operativity
-                    }).ToList()
+                    Managment = gMgmt.Key.Managment,
+                    Area = gMgmt.Key.Area,
+                    // Promedio de toda la Gerencia
+                    Operativity = gMgmt.Average(x => x.Operativity),
+
+                    Jefes = gMgmt
+                        // Nivel 2: Agrupar por Jefe
+                        .GroupBy(x => x.Jefe)
+                        .Select(gJefe => new ManagmentOperativityData.JefeOperativityData
+                        {
+                            Jefe = gJefe.Key,
+                            // Promedio de toda la Jefatura
+                            Operativity = gJefe.Average(x => x.Operativity),
+
+                            Supervisors = gJefe
+                                // Nivel 3: Agrupar por Supervisor
+                                .GroupBy(x => x.Supervisor)
+                                .Select(gSup => new ManagmentOperativityData.JefeOperativityData.SupervisorOperativityData
+                                {
+                                    Supervisor = gSup.Key,
+                                    // Promedio de todo el Supervisor
+                                    Operativity = gSup.Average(x => x.Operativity),
+
+                                    Leaders = gSup
+                                        // Nivel 4: Lista de Líderes (hojas del árbol)
+                                        .Select(l => new ManagmentOperativityData.JefeOperativityData.SupervisorOperativityData.LeaderOperativityData
+                                        {
+                                            Leader = l.Leader,
+                                            Operativity = l.Operativity
+                                        }).ToList()
+                                }).ToList()
+                        }).ToList()
                 }).ToList();
 
             // ---------------------------------------------------------
@@ -180,7 +216,7 @@ namespace LogicDomain.ApplicationServices
             // 4. Tabla Part Numbers
             // ---------------------------------------------------------
             var partNumberHeaders = await query
-                .GroupBy(g => new { g.PartNumberName, g.Area})
+                .GroupBy(g => new { g.PartNumberName, g.Area })
                 .Select(data => new
                 {
                     data.Key.PartNumberName,
@@ -233,32 +269,32 @@ namespace LogicDomain.ApplicationServices
             // B. Supervisor Heatmaps (Diario)
             var supervisors = rawSupervisorTrendData.Select(x => x.Supervisor).Distinct().ToList();
 
-            var supervisorOperativityDayHeatMap = supervisors.Select(supervisor => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap
-            {
-                Supervisor = supervisor,
-                DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
-                {
-                    Day = day,
-                    Operativity = rawSupervisorTrendData
-                        .FirstOrDefault(r => r.Supervisor == supervisor && r.Date.Date == day.Date)
-                        ?.AvgOperativity ?? 0,
-                }).ToList(),
-                Leaders = rawSupervisorTrendData
-                    .Where(x => x.Supervisor == supervisor)
-                    .Select(x => x.Leader)
-                    .Distinct()
-                    .Select(leader => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap.LeaderOperativityData
-                    {
-                        Leader = leader,
-                        DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
-                        {
-                            Day = day,
-                            Operativity = rawSupervisorTrendData
-                                .FirstOrDefault(r => r.Supervisor == supervisor && r.Leader == leader && r.Date.Date == day.Date)
-                                ?.AvgOperativity ?? 0,
-                        }).ToList()
-                    }).ToList()
-            }).ToList();
+            //var supervisorOperativityDayHeatMap = supervisors.Select(supervisor => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap
+            //{
+            //    Supervisor = supervisor,
+            //    DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
+            //    {
+            //        Day = day,
+            //        Operativity = rawSupervisorTrendData
+            //            .FirstOrDefault(r => r.Supervisor == supervisor && r.Date.Date == day.Date)
+            //            ?.AvgOperativity ?? 0,
+            //    }).ToList(),
+            //    Leaders = rawSupervisorTrendData
+            //        .Where(x => x.Supervisor == supervisor)
+            //        .Select(x => x.Leader)
+            //        .Distinct()
+            //        .Select(leader => new OperationalAnalysisResponseDto.SupervisorOperativityDayHeatMap.LeaderOperativityData
+            //        {
+            //            Leader = leader,
+            //            DayOperativities = allDays.Select(day => new OperationalAnalysisResponseDto.DayOperativity
+            //            {
+            //                Day = day,
+            //                Operativity = rawSupervisorTrendData
+            //                    .FirstOrDefault(r => r.Supervisor == supervisor && r.Leader == leader && r.Date.Date == day.Date)
+            //                    ?.AvgOperativity ?? 0,
+            //            }).ToList()
+            //        }).ToList()
+            //}).ToList();
 
             // ---------------------------------------------------------
             // 6. NUEVA SECCIÓN: Tendencias Mensuales (Anuales)
@@ -266,7 +302,7 @@ namespace LogicDomain.ApplicationServices
 
             // Paso A: Traer datos agrupados por Año y Mes desde DB
             // 1. Calculamos las fechas dinámicamente
-            
+
 
             // 2. Usamos estas fechas en el Where en lugar de las del 'request'
             var rawMonthlyData = await _temporalContext.OperationalEfficiencies
@@ -303,10 +339,10 @@ namespace LogicDomain.ApplicationServices
             return new OperationalAnalysisResponseDto
             {
                 Cards = kpiCardsData,
-                Supervisors = formattedSupervisorsData,
+                Managments = formattedManagmentData,
                 PartNumbers = tablePartNumberData,
                 AreaOperativityDayTrends = areaOperativityDayTrendData,
-                SupervisorOperativityDayHeatMaps = supervisorOperativityDayHeatMap,
+                //SupervisorOperativityDayHeatMaps = supervisorOperativityDayHeatMap,
                 AnnualAreaTrends = annualAreaTrends // <--- Nuevo campo
             };
         }
