@@ -37,9 +37,6 @@ namespace LogicData.Context
 
                 entity.Property(e => e.Module).IsRequired().HasMaxLength(100);
 
-                entity.HasMany(e => e.AuthSubmodules)
-                      .WithOne(e => e.AuthModule)
-                      .HasForeignKey(e => e.ModuleId);
             });
 
             builder.Entity<AuthSubmodule>(entity =>
@@ -51,9 +48,8 @@ namespace LogicData.Context
 
                 entity.Property(e => e.Submodule).IsRequired().HasMaxLength(100);
 
-                entity.HasMany(e => e.AuthPermissions)
-                      .WithOne(e => e.AuthSubmodule)
-                      .HasForeignKey(e => e.SubmoduleId);
+
+                entity.HasOne(e => e.AuthModule).WithMany(m => m.AuthSubmodules).HasForeignKey(e => e.ModuleId).OnDelete(DeleteBehavior.Cascade);
             });
 
             builder.Entity<AuthPermissions>(entity =>
@@ -63,6 +59,8 @@ namespace LogicData.Context
                 entity.HasIndex(e => e.Clave).IsUnique();
                 entity.Property(e => e.Permission).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.Clave).IsRequired().HasMaxLength(200);
+
+                entity.HasOne(e => e.AuthSubmodule).WithMany(s => s.AuthPermissions).HasForeignKey(e => e.SubmoduleId).OnDelete(DeleteBehavior.Cascade);
 
             });
 

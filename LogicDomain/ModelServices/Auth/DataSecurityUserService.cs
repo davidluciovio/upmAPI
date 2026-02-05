@@ -48,7 +48,7 @@ namespace LogicDomain._00_DataUPM
             {
                 UserName = string.Concat("UPM",createDto.Email.ToUpper()),
                 Email = createDto.Email,
-                PrettyName = createDto.UserName.ToUpper(),
+                PrettyName = createDto.PrettyName.ToUpper(),
                 Active = true,
                 CreateBy = createDto.CreateBy,
                 UpdateBy = createDto.CreateBy, // Initially same as CreateBy
@@ -195,11 +195,15 @@ namespace LogicDomain._00_DataUPM
             }
 
             user.UserName = string.Concat("UPM", updateDto.Email.ToUpper());
+            user.NormalizedUserName = string.Concat("UPM", updateDto.Email.ToUpper());
             user.Email = updateDto.Email;
-            user.PrettyName = updateDto.UserName.ToUpper();
+            user.NormalizedEmail = updateDto.Email.ToUpper();
+            user.PrettyName = updateDto.PrettyName.ToUpper();
             user.Active = updateDto.Active;
             user.UpdateBy = updateDto.UpdateBy;
             user.UpdateDate = DateTime.UtcNow;
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, updateDto.Password);
 
             _authContext.Users.Update(user);
 

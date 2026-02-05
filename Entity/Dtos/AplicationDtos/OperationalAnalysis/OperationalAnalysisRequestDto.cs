@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.AplicationDtos.OperationalAnalysis
+namespace Entity.Dtos.AplicationDtos.OperationalAnalysis
 {
     public class OperationalAnalysisRequestDto
     {
@@ -15,5 +15,7 @@ namespace Entity.AplicationDtos.OperationalAnalysis
         public List<string> Areas { get; set; } = new List<string>();
         public List<string> Supervisors { get; set; } = new List<string>();
         public List<string> Jefes { get; set; } = new List<string>();
+        public List<string> PartNumbers { get; set; } = new List<string>();
+        public List<string> Shifts { get; set; } = new List<string>();
     }
 }

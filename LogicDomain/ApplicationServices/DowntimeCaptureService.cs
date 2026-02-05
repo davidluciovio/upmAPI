@@ -1,4 +1,4 @@
-﻿using Entity.AplicationDtos.DowntimeCapture;
+﻿using Entity.Dtos.AplicationDtos.DowntimeCapture;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,7 +55,7 @@ namespace LogicDomain.ApplicationServices
                 .ToDictionaryAsync(m => m.Id);
 
             // 5. Construcción del DTO de respuesta
-            var response = new DowntimeCaptureResponseDto
+            var responseDowntimeCaptureResponse = new DowntimeCaptureResponseDto
             {
                 LineId = line.Id,
                 LineDescription = line.LineDescription,
@@ -99,8 +99,8 @@ namespace LogicDomain.ApplicationServices
                                 : 0f;
 
                             float minutesPzas = producedQty > 0 ? totalWorkingTime / producedQty : 0f;
-                            float objQty = ps.ObjetiveTime > 0 ? (totalWorkingTime / (float)ps.ObjetiveTime) : 0f;
-                            float efficiency = (minutesPzas > 0) ? ((float)ps.ObjetiveTime / minutesPzas) : 0f;
+                            float objQty = ps.NetoTime > 0 ? (totalWorkingTime / (float)ps.NetoTime) : 0f;
+                            float efficiency = (minutesPzas > 0) ? ((float)ps.NetoTime / minutesPzas) : 0f;
 
                             return new DowntimeCaptureResponseDto.PartNumberDataProduction.HourlyProductionData
                             {
@@ -120,7 +120,12 @@ namespace LogicDomain.ApplicationServices
                 }).ToList()
             };
 
-            return response;
+            return new DowntimeCaptureResponseDto
+            {
+                LineDescription = responseDowntimeCaptureResponse.LineDescription,
+                LineId = responseDowntimeCaptureResponse.LineId,
+                partNumberDataProductions = responseDowntimeCaptureResponse.partNumberDataProductions
+            };
         }
     }
 }

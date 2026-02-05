@@ -81,7 +81,7 @@ namespace LogicDomain
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Name, user.NormalizedUserName!),
+                new Claim(JwtRegisteredClaimNames.Name, user.PrettyName!),
             };
 
             // 2. Obtener roles del usuario (ej. ["Vendedor", "Contador"])

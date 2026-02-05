@@ -1,10 +1,11 @@
-﻿using Entity.AplicationDtos.OperationalAnalysis;
+﻿using Entity.Dtos.AplicationDtos.OperationalAnalysis;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security;
-using static Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto;
+using static Entity.Dtos.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto;
 
 namespace LogicDomain.ApplicationServices
 {
@@ -26,6 +27,14 @@ namespace LogicDomain.ApplicationServices
                 .Select(x => x.Managment)
                 .Distinct()
                 .ToListAsync();
+            var partNumbers = await _temporalContext.OperationalEfficiencies
+                .Select(x => x.PartNumberName)
+                .Distinct()
+                .ToListAsync();
+            var shifts = await _temporalContext.OperationalEfficiencies
+                .Select(x => x.Shift)
+                .Distinct()
+                .ToListAsync();
             var areas = await _temporalContext.OperationalEfficiencies
                 .Select(x => x.Area)
                 .Distinct()
@@ -45,7 +54,9 @@ namespace LogicDomain.ApplicationServices
                 Managments = managments,
                 Areas = areas,
                 Supervisors = supervisors,
-                Jefes = jefes
+                Jefes = jefes,
+                PartNumbers = partNumbers,
+                Shifts = shifts
             };
 
             return result;
@@ -97,6 +108,12 @@ namespace LogicDomain.ApplicationServices
 
             if (request.Jefes != null && request.Jefes.Any())
                 query = query.Where(x => request.Jefes.Contains(x.Jefe));
+
+            if (request.PartNumbers != null && request.PartNumbers.Any())
+                query = query.Where(x => request.PartNumbers.Contains(x.PartNumberName));
+
+            if (request.Shifts != null && request.Shifts.Any())
+                query = query.Where(x => request.Shifts.Contains(x.Shift));
 
             // ---------------------------------------------------------
             // 2. KPI Cards
@@ -237,13 +254,7 @@ namespace LogicDomain.ApplicationServices
                     Supervisor = header.Supervisor,
                     Leader = header.Leader,
                     Operativity = header.AvgOperativity,
-                    DayOperativities = trendsLookup[header.PartNumberName]
-                        .Select(r => new OperationalAnalysisResponseDto.DayOperativity
-                        {
-                            Day = r.Date,
-                            Operativity = r.AvgOperativity
-                        })
-                        .ToList()
+                    
                 })
                 .ToList();
 
@@ -349,53 +360,111 @@ namespace LogicDomain.ApplicationServices
 
         public async IAsyncEnumerable<string> GetOperationalAnalysisStream([EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var password = new SecureString();
-            foreach (char c in "N3g1T0r01107") password.AppendChar(c);
+            string user = "UPM.COM.MX\\Administrator";
+            string pass = "N3g1T0r01107";
+
+            // Rutas
+            string rutaExeDir = @"\\upmap11\c$\UPM\ProductionData";
+            string servidorDatos = @"\\upms001";
+            string servidorApp = @"\\upmap11";
+
+            // COMANDO ROBUSTO (IPC$ + PUSHD):
+            // Autentica en ambos servidores sin letras y luego monta la unidad con pushd.
+            string command = $"/C \"net use \"{servidorDatos}\\IPC$\" {pass} /USER:{user} /Y && " +
+                             $"net use \"{servidorApp}\\IPC$\" {pass} /USER:{user} /Y && " +
+                             $"pushd \"{rutaExeDir}\" && XSLXtoCSV.exe && popd && " +
+                             $"net use * /delete /y\"";
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = @"\\upmap11\c$\UPM\ProductionData\XSLXtoCSV.exe",
-                Arguments = "",
+                FileName = "cmd.exe",
+                Arguments = command,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true,
-
-                // Configuración de Identidad
-                UserName = "Administrator",
-                Password = password,
-                Domain = "NombreDominioOEquipo", // O "." para local
-                LoadUserProfile = true
+                CreateNoWindow = true
             };
 
             using var process = new Process { StartInfo = startInfo };
 
-            process.Start();
+            // --- CORRECCIÓN DEL TRY/CATCH ---
+            // 1. Declaramos variable fuera
+            string? errorFatal = null;
 
-            // Leemos la salida línea por línea en lugar de esperar al final
+            try
+            {
+                process.Start();
+            }
+            catch (Exception ex)
+            {
+                // 2. Asignamos el error a la variable (sin yield aquí)
+                errorFatal = ex.Message;
+            }
+
+            // 3. Hacemos el yield fuera del bloque catch
+            if (errorFatal != null)
+            {
+                yield return $"[FATAL START]: {errorFatal}";
+                yield break;
+            }
+            // --------------------------------
+
+            // Bucle de lectura
             while (!process.StandardOutput.EndOfStream)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    process.Kill();
-                    yield break;
-                }
+                if (cancellationToken.IsCancellationRequested) { process.Kill(); yield break; }
 
-                string? line = await process.StandardOutput.ReadLineAsync();
-                if (line != null)
+                string? line = await process.StandardOutput.ReadLineAsync(cancellationToken);
+
+                // Filtros de limpieza para no ver mensajes de "net use"
+                if (!string.IsNullOrWhiteSpace(line) &&
+                    !line.Contains("Comando completado") &&
+                    !line.Contains("Se eliminaron"))
                 {
-                    yield return line; // Enviamos la línea al cliente inmediatamente
+                    yield return line;
                 }
             }
 
-            // También capturamos errores si los hay
-            if (!process.StandardError.EndOfStream)
+            string error = await process.StandardError.ReadToEndAsync(cancellationToken);
+            // Ignoramos el error 85 (recurso en uso) si aparece
+            if (!string.IsNullOrWhiteSpace(error) && !error.Contains("85"))
             {
-                string error = await process.StandardError.ReadToEndAsync();
-                if (!string.IsNullOrEmpty(error)) yield return $"[ERROR]: {error}";
+                yield return $"[LOG ERROR]: {error}";
             }
 
             await process.WaitForExitAsync(cancellationToken);
+        }
+
+        public async Task<PartOperativityData> GetDayOperativity(string partNumber, DateTime startDate, DateTime endDate)
+        {
+            var dayOperativity = await _temporalContext.OperationalEfficiencies
+                .Where(x => x.PartNumberName == partNumber && x.ProductionDate >= startDate && x.ProductionDate <= endDate)
+                .GroupBy(x => new { x.Area, x.Supervisor, x.Leader, x.Shift, x.ProductionDate })
+                .Select(g => new PartOperativityData
+                {
+                    PartNumber = partNumber,
+                    Area = g.Key.Area,
+                    Supervisor = g.Key.Supervisor,
+                    Leader = g.Key.Leader,
+                    Shift = g.Key.Shift,
+                    DayOperativities = g.Select(x => new DayOperativity
+                    {
+                        Day = g.Key.ProductionDate,
+                        Operativity = g.Average(x => x.OperativityPercent)
+                    }).ToList()
+                }).ToListAsync();
+
+
+            return new PartOperativityData
+            {
+                PartNumber = partNumber,
+                Area = dayOperativity.FirstOrDefault().Area,
+                Supervisor = dayOperativity.FirstOrDefault().Supervisor,
+                Leader = dayOperativity.FirstOrDefault().Leader,
+                Shift = dayOperativity.FirstOrDefault().Shift,
+                Operativity = dayOperativity.SelectMany(x => x.DayOperativities).ToList().Average(x => x.Operativity),
+                DayOperativities = dayOperativity.SelectMany(x => x.DayOperativities).OrderBy(x => x.Day).ToList()
+            };
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.AplicationDtos.DowntimeCapture
+namespace Entity.Dtos.AplicationDtos.DowntimeCapture
 {
     public class DowntimeCaptureResponseDto
     {
@@ -39,6 +39,15 @@ namespace Entity.AplicationDtos.DowntimeCapture
                 public float ObjetiveQuantity { get; set; }
                 public float Efectivity { get; set; }
 
+            }
+
+            public class OperatorsDto
+            {
+                public Guid LineOperatorId { get; set; }
+                public string OperatorCode { get; set; } = string.Empty;
+                public string OperatorName { get; set; } = string.Empty;
+                public DateTime StartDatetime { get; set; }
+                public DateTime EndDatetime { get; set; }
             }
         }
     }

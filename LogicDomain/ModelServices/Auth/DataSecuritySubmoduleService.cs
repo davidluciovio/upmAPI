@@ -28,6 +28,7 @@ namespace LogicDomain._00_DataUPM
 
             var submodule = new AuthSubmodule
             {
+                Id = Guid.NewGuid(),
                 Submodule = dtocreate.Submodule,
                 ModuleId = dtocreate.ModuleId,
                 Icon = dtocreate.Icon,

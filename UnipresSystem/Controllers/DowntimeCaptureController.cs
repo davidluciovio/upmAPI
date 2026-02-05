@@ -1,4 +1,5 @@
-﻿using LogicDomain.ApplicationServices;
+﻿using Entity.Dtos.AplicationDtos.DowntimeCapture;
+using LogicDomain.ApplicationServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UnipresSystem.Controllers
@@ -15,7 +16,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/get-downtime-capture-data")]
-        public async Task<IActionResult> GetDowntimeCaptureData([FromBody] Entity.AplicationDtos.DowntimeCapture.DowntimeCaptureRequestDto request)
+        public async Task<IActionResult> GetDowntimeCaptureData([FromBody] DowntimeCaptureRequestDto request)
         {
             var result = await _downtimeCaptureService.GetDowntimeCaptureData(request);
             return Ok(result);

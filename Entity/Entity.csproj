@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ModelDtos\00_DataUPM\" />
+    <Folder Include="Dtos\ModelDtos\DataUPM\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using LogicDomain.ApplicationServices;
+﻿using Entity.Dtos.AplicationDtos.OperationalAnalysis;
+using LogicDomain.ApplicationServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UnipresSystem.Controllers
@@ -25,7 +26,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/get-operational-analysis-data")]
-        public async Task<IActionResult> GetOperationalAnalysisData([FromBody] Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisRequestDto request)
+        public async Task<IActionResult> GetOperationalAnalysisData([FromBody] OperationalAnalysisRequestDto request)
         {
             var result = await _operationalAnalysisService.GetOperationalAnalysisData(request);
             return Ok(result);
@@ -44,6 +45,13 @@ namespace UnipresSystem.Controllers
                 await Response.WriteAsync($"data: {line}\n\n");
                 await Response.Body.FlushAsync(); // ¡Vital para que no se quede en el buffer!
             }
+        }
+
+        [HttpGet("v1/get-operational-analysis-partNumberData")]
+        public async Task<IActionResult> GetOperationalAnalysisPartNumberData([FromQuery] string partNumber, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            var result = await _operationalAnalysisService.GetDayOperativity(partNumber, startDate, endDate);
+            return Ok(result);
         }
     }
 }

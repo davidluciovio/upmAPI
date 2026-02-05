@@ -23,6 +23,7 @@ namespace LogicData.Context
         public DbSet<DataProductionArea> ProductionAreas { get; set; }
         public DbSet<DataProductionLine> ProductionLines { get; set; }
         public DbSet<DataStatus> Statuses { get; set; }
+        public DbSet<DataActiveEmployees> ActiveEmployees { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -56,8 +57,8 @@ namespace LogicData.Context
                 entity.HasIndex(e => e.LocationDescription).IsUnique();
 
                 entity.Property(e => e.LocationDescription).IsRequired().HasMaxLength(200);
-            }); 
-            
+            });
+
             builder.Entity<DataProductionArea>(entity =>
             {
                 entity.ToTable("ProductionArea");
@@ -65,7 +66,7 @@ namespace LogicData.Context
                 entity.HasIndex(e => e.AreaDescription).IsUnique();
                 entity.Property(e => e.AreaDescription).IsRequired().HasMaxLength(100);
             });
-            
+
             builder.Entity<DataProductionLine>(entity =>
             {
                 entity.ToTable("ProductionLine");
@@ -103,10 +104,20 @@ namespace LogicData.Context
                 entity.Property(e => e.PartNumberName).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.PartNumberDescription).HasMaxLength(500);
 
-                
+
             });
 
+            builder.Entity<DataActiveEmployees>(entity =>
+            {
+                entity.ToView("vw_active_employees");
+                entity.HasNoKey();
+
+                entity.Property(e => e.CB_NOMBRES).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.CB_APE_MAT).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.CB_APE_PAT).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PRETTYNAME).IsRequired().HasMaxLength(300);
+
+            });
         }
-    
     }
 }

@@ -1,6 +1,7 @@
-﻿using static Entity.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto.AreaOperativityDayTrend;
+﻿using Entity.AplicationDtos._01_ProductionAcvhievementDtos;
+using static Entity.Dtos.AplicationDtos.OperationalAnalysis.OperationalAnalysisResponseDto.AreaOperativityDayTrend;
 
-namespace Entity.AplicationDtos.OperationalAnalysis
+namespace Entity.Dtos.AplicationDtos.OperationalAnalysis
 {
     public class OperationalAnalysisResponseDto
     {
@@ -52,7 +53,7 @@ namespace Entity.AplicationDtos.OperationalAnalysis
             public string Supervisor { get; set; } = string.Empty;
             public string Leader { get; set; } = string.Empty;
             public double Operativity { get; set; }
-            public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+            //public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
 
         }
 
@@ -94,6 +95,18 @@ namespace Entity.AplicationDtos.OperationalAnalysis
             public DateTime Day { get; set; }
             public double Operativity { get; set; }
         }
-    }
+
+        public class PartOperativityData
+        {
+            public string PartNumber { get; set; }
+            public string Area { get; set; }
+            public string Supervisor { get; set; }
+            public string Leader { get; set; }
+            public double Operativity { get; set; }
+            public string Shift { get; set; }
+            public List<DayOperativity> DayOperativities { get; set; } = new List<DayOperativity>();
+
+        }
+}
 
 }
