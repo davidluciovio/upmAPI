@@ -12,7 +12,7 @@ namespace UnipresSystem.Data
             var roleManager = services.GetRequiredService<RoleManager<AuthRole>>();
 
             // --- Nombres de roles ---
-            string[] roleNames = { "SuperAdmin", "Admin", "Vendedor", "Contador", "Usuario" };
+            string[] roleNames = { "SuperAdmin", "Admin", "Usuario" };
 
             foreach (var roleName in roleNames)
             {
