@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LogicData.Migrations
+namespace LogicData.Migrations.Auth
 {
     /// <inheritdoc />
-    public partial class AgregandoTablasRBAC : Migration
+    public partial class MigracionTotal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,6 +35,12 @@ namespace LogicData.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrettyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -64,7 +70,9 @@ namespace LogicData.Migrations
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Module = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Module = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Route = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,7 +206,9 @@ namespace LogicData.Migrations
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Submodule = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ModuleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ModuleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Route = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

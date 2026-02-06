@@ -18,6 +18,6 @@ namespace Entity.Models.Auth
         public string Clave { get; set; } = string.Empty; 
         public Guid SubmoduleId { get; set; }
 
-        public virtual AuthSubmodule AuthSubmodule { get; set; } = new AuthSubmodule();
+        public virtual AuthSubmodule? AuthSubmodule { get; set; }
     }
 }

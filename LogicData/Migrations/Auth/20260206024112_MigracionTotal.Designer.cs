@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LogicData.Migrations
+namespace LogicData.Migrations.Auth
 {
     [DbContext(typeof(AuthContext))]
-    [Migration("20251203192134_editTable_AuthUser_addColumns")]
-    partial class editTable_AuthUser_addColumns
+    [Migration("20260206024112_MigracionTotal")]
+    partial class MigracionTotal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,44 @@ namespace LogicData.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Entity.Dtos.Auth.AuthPermissions", b =>
+            modelBuilder.Entity("Entity.Models.Auth.AuthModule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Module")
+                        .IsUnique();
+
+                    b.ToTable("Modules", "upm_auth");
+                });
+
+            modelBuilder.Entity("Entity.Models.Auth.AuthPermissions", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,35 +100,6 @@ namespace LogicData.Migrations
                     b.HasIndex("SubmoduleId");
 
                     b.ToTable("Permissions", "upm_auth");
-                });
-
-            modelBuilder.Entity("Entity.Models.Auth.AuthModule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Module")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Module")
-                        .IsUnique();
-
-                    b.ToTable("Modules", "upm_auth");
                 });
 
             modelBuilder.Entity("Entity.Models.Auth.AuthRole", b =>
@@ -137,8 +145,16 @@ namespace LogicData.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("ModuleId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Submodule")
                         .IsRequired()
@@ -206,6 +222,10 @@ namespace LogicData.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PrettyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -343,7 +363,7 @@ namespace LogicData.Migrations
                     b.ToTable("AspNetUserTokens", "upm_auth");
                 });
 
-            modelBuilder.Entity("Entity.Dtos.Auth.AuthPermissions", b =>
+            modelBuilder.Entity("Entity.Models.Auth.AuthPermissions", b =>
                 {
                     b.HasOne("Entity.Models.Auth.AuthSubmodule", "AuthSubmodule")
                         .WithMany("AuthPermissions")

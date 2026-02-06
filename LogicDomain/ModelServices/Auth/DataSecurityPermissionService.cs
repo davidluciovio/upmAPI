@@ -28,6 +28,7 @@ namespace LogicDomain._00_DataUPM
 
             var permission = new AuthPermissions
             {
+                Id = Guid.NewGuid(),
                 Permission = dtocreate.Permission,
                 Clave = dtocreate.Clave,
                 SubmoduleId = dtocreate.SubmoduleId,
@@ -55,6 +56,7 @@ namespace LogicDomain._00_DataUPM
                 .Select(p => new DataSecurityPermissionResponseDto
                 {
                     Id = p.Id,
+                    Active = p.Active,
                     Permission = p.Permission,
                     Clave = p.Clave,
                     SubmoduleId = p.SubmoduleId
@@ -98,6 +100,7 @@ namespace LogicDomain._00_DataUPM
             permission.SubmoduleId = dtoUpdate.SubmoduleId;
             permission.Active = dtoUpdate.Active;
 
+            _authContext.Permissions.Update(permission);
             await _authContext.SaveChangesAsync();
 
             return new DataSecurityPermissionResponseDto

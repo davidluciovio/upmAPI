@@ -56,11 +56,13 @@ namespace LogicDomain._00_DataUPM
         {
             return await _authContext.Submodules
                 .Where(s => s.Active)
+                .Include(s => s.AuthModule)
                 .Select(s => new DataSecuritySubmoduleResponseDto
                 {
                     Id = s.Id,
                     Submodule = s.Submodule,
                     ModuleId = s.ModuleId,
+                    Module = s.AuthModule.Module,
                     Icon = s.Icon,
                     Route = s.Route,
                     Active = s.Active,
@@ -105,7 +107,8 @@ namespace LogicDomain._00_DataUPM
             submodule.ModuleId = dtoUpdate.ModuleId;
             submodule.Icon = dtoUpdate.Icon;
             submodule.Route = dtoUpdate.Route;
-            
+
+            _authContext.Submodules.Update(submodule);
             await _authContext.SaveChangesAsync();
 
             return new DataSecuritySubmoduleResponseDto

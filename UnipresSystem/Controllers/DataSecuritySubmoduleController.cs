@@ -73,7 +73,7 @@ namespace UnipresSystem.Controllers
             }
         }
 
-        [HttpPut("v1/update/{id}")]
+        [HttpPost("v1/update/{id}")]
         public async Task<IActionResult> UpdateSubmodule(Guid id, [FromBody] DataSecuritySubmoduleRequestDto updateDto)
         {
             try
