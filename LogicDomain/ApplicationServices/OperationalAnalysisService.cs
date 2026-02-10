@@ -367,11 +367,13 @@ namespace LogicDomain.ApplicationServices
             string rutaExeDir = @"\\upmap11\c$\UPM\ProductionData";
             string servidorDatos = @"\\upms001";
             string servidorApp = @"\\upmap11";
+            string servidorPCP = @"\\upms002";
 
             // COMANDO ROBUSTO (IPC$ + PUSHD):
             // Autentica en ambos servidores sin letras y luego monta la unidad con pushd.
             string command = $"/C \"net use \"{servidorDatos}\\IPC$\" {pass} /USER:{user} /Y && " +
                              $"net use \"{servidorApp}\\IPC$\" {pass} /USER:{user} /Y && " +
+                             $"net use \"{servidorPCP}\\IPC$\" {pass} /USER:{user} /Y && " +
                              $"pushd \"{rutaExeDir}\" && XSLXtoCSV.exe && popd && " +
                              $"net use * /delete /y\"";
 

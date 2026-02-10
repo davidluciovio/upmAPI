@@ -36,7 +36,7 @@ namespace LogicDomain.DataProduction
                 throw new ArgumentException("CreateBy cannot be null or empty");
             }
 
-            if(_dataContext.ProductionLines.Select(x => x.LineDescription == createDto.LineDescription).Any())
+            if(!_dataContext.ProductionLines.Select(x => x.LineDescription == createDto.LineDescription).Any())
             {
                 throw new ArgumentException("LineDescription must be unique");
             }

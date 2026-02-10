@@ -95,8 +95,8 @@ namespace LogicDomain.ApplicationServices
 
                             // Lógica de tiempo de trabajo (Mínimo 0 para evitar negativos)
                             float totalWorkingTime = prInInterval.Count > 1
-                                ? (float)(prInInterval.Max(pr => pr.CreateDate) - prInInterval.Min(pr => pr.CreateDate)).TotalMinutes
-                                : 0f;
+                                ? (float)(prInInterval.Max(pr => pr.CreateDate) - interval.Start).TotalMinutes - downtimeNP
+                                : 0f ;
 
                             float minutesPzas = producedQty > 0 ? totalWorkingTime / producedQty : 0f;
                             float objQty = ps.NetoTime > 0 ? (totalWorkingTime / (float)ps.NetoTime) : 0f;
@@ -112,7 +112,7 @@ namespace LogicDomain.ApplicationServices
                                 TotalWorkingTime = totalWorkingTime,
                                 MinutesPzas = minutesPzas,
                                 ProducedQuantity = producedQty,
-                                ObjetiveQuantity = objQty,
+                                ObjetiveQuantity = (int)objQty,
                                 Efectivity = efficiency
                             };
                         }).ToList()
