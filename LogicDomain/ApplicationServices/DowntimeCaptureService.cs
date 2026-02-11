@@ -124,7 +124,7 @@ namespace LogicDomain.ApplicationServices
             {
                 LineDescription = responseDowntimeCaptureResponse.LineDescription,
                 LineId = responseDowntimeCaptureResponse.LineId,
-                partNumberDataProductions = responseDowntimeCaptureResponse.partNumberDataProductions
+                partNumberDataProductions = responseDowntimeCaptureResponse.partNumberDataProductions.Where(x => x.hourlyProductionDatas.Sum(y => y.ProducedQuantity) > 0).ToList()
             };
         }
     }
