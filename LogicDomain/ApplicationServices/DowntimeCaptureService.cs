@@ -120,11 +120,20 @@ namespace LogicDomain.ApplicationServices
                 }).ToList()
             };
 
+            var partNumberProductionsWithOutput = responseDowntimeCaptureResponse.partNumberDataProductions
+                .Where(p => p.hourlyProductionDatas.Any(h => h.ProducedQuantity > 0))
+                .ToList();
+
+            partNumberProductionsWithOutput.ForEach(p =>
+            {
+                p.hourlyProductionDatas = p.hourlyProductionDatas.Where(h => h.ProducedQuantity > 0).ToList();
+            });
+
             return new DowntimeCaptureResponseDto
             {
                 LineDescription = responseDowntimeCaptureResponse.LineDescription,
                 LineId = responseDowntimeCaptureResponse.LineId,
-                partNumberDataProductions = responseDowntimeCaptureResponse.partNumberDataProductions.Where(x => x.hourlyProductionDatas.Sum(y => y.ProducedQuantity) > 0).ToList()
+                partNumberDataProductions = partNumberProductionsWithOutput
             };
         }
     }
