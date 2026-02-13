@@ -17,8 +17,8 @@ namespace Entity.Models.ProductionControl
 
         public Guid PartNumberLogisticId { get; set; }
         public virtual PartNumberLogistics PartNumberLogistics { get; set; } = new PartNumberLogistics();
-        public Guid ComponentId { get; set; }
-        public string ComponentName { get; set; } = string.Empty;
+        public Guid CompletePartId { get; set; }
+        public string CompletePartName { get; set; } = string.Empty;
 
         public int Quantity { get; set; }
 
