@@ -25,6 +25,8 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
             public float HPTime { get; set; }
 
             public List<HourlyProductionData> hourlyProductionDatas { get; set; } = new List<HourlyProductionData>();
+            public List<OperatorsDto> Operators { get; set; } = new List<OperatorsDto>();
+            public List<DowntimeRegisterData> DowntimeRegisters { get; set; } = new List<DowntimeRegisterData>();
 
             public class HourlyProductionData
             {
@@ -48,6 +50,16 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
                 public string OperatorName { get; set; } = string.Empty;
                 public DateTime StartDatetime { get; set; }
                 public DateTime EndDatetime { get; set; }
+            }
+
+            public class DowntimeRegisterData
+            {
+                public Guid Id { get; set; }
+                public DateTime StartDowntimeDatetime { get; set; }
+                public DateTime EndDowntimeDatetime { get; set; }
+                public Guid DataProductionDowntimeId { get; set; }
+                public Guid ProductionStationId { get; set; }
+                public string DowntimeReason { get; set; } = string.Empty; // Adding a placeholder for reason
             }
         }
     }
