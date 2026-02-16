@@ -4,6 +4,7 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogicData.Migrations.AssyProduction
 {
     [DbContext(typeof(AssyProductionContext))]
-    partial class AssyProductionContextModelSnapshot : ModelSnapshot
+    [Migration("20260213032023_createTable_CompleteRackRegister")]
+    partial class createTable_CompleteRackRegister
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

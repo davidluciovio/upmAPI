@@ -10,5 +10,6 @@ namespace Entity.Dtos._00_DataUPM
         public string Password { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
         public string CreateBy { get; set; } = string.Empty;
+        public string CodeUser { get; set; } = string.Empty;
     }
 }

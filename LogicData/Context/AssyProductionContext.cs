@@ -1,5 +1,6 @@
 ﻿using Entity.Models._04_AssyProduction;
 using Entity.Models.AssyProduction;
+using LogicData.Models.AssyProduction;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,19 @@ namespace LogicData.Context
     {
         public AssyProductionContext()
         {
-            
+
         }
 
-        public AssyProductionContext(DbContextOptions<AssyProductionContext> options): base(options)
+        public AssyProductionContext(DbContextOptions<AssyProductionContext> options) : base(options)
         {
-            
+
         }
 
         public DbSet<ProductionStation> ProductionStations { get; set; }
         public DbSet<ProductionRegister> ProductionRegisters { get; set; }
         public DbSet<DowntimeRegister> DowntimeRegisters { get; set; }
         public DbSet<LineOperatorsRegister> LineOperatorsRegisters { get; set; }
+        public DbSet<CompleteRackRegister> CompleteRackRegisters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -49,7 +51,7 @@ namespace LogicData.Context
             {
                 entity.ToTable("ProductionRegister");
                 entity.HasKey(e => e.Id);
-                
+
                 entity.HasOne(e => e.ProductionStation).WithMany(ps => ps.PrductionRegisters).HasForeignKey(e => e.ProductionStationId);
 
             });
@@ -71,6 +73,18 @@ namespace LogicData.Context
                 entity.Property(e => e.LineId).IsRequired();
 
             });
+
+            builder.Entity<CompleteRackRegister>(entity =>
+            {
+                entity.ToTable("CompleteRackRegister");
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.ProductionStation)
+                    .WithMany(ps => ps.CompleteRackRegisters)
+                    .HasForeignKey(e => e.ProductionStationId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
         }
     }
 }

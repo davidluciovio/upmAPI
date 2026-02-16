@@ -1,0 +1,12 @@
+using System;
+
+namespace Entity.Dtos.AplicationDtos.DowntimeCapture
+{
+    public class DowntimeRegisterDto
+    {
+        public DateTime StartDowntimeDatetime { get; set; }
+        public DateTime EndDowntimeDatetime { get; set; }
+        public Guid DataProductionDowntimeId { get; set; }
+        public Guid ProductionStationId { get; set; }
+    }
+}
