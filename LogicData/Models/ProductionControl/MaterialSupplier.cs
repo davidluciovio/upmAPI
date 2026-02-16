@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entity.Models.ProductionControl
 {
-    internal class MaterialSupplier
+    public class MaterialSupplier
     {
     }
 }

@@ -20,6 +20,8 @@ namespace Entity.Dtos._00_DataUPM
         public string UpdateBy { get; set; } = string.Empty;
         
         public string RoleName { get; set; } = string.Empty;
+        public string CodeUser { get; set; } = string.Empty;
+
 
     }
 }

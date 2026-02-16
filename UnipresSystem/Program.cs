@@ -25,6 +25,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
+using LogicDomain.SystemServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -200,6 +201,7 @@ builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationC
 
 builder.Services.AddScoped<OperationalAnalysisService>();
 builder.Services.AddScoped<DowntimeCaptureService>();
+builder.Services.AddScoped<LdapService>();
 
 builder.Services.AddScoped<IComponentAlertService, LogicDomain.ModelServices.ComponentAlertService>();
 

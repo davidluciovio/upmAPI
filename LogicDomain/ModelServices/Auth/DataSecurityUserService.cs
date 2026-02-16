@@ -37,6 +37,11 @@ namespace LogicDomain._00_DataUPM
             {
                 throw new InvalidOperationException($"Email '{createDto.Email}' is already in use.");
             }
+            if (await _authContext.Users.AnyAsync(u => u.CodeUser == createDto.CodeUser))
+            {
+                throw new InvalidOperationException($"Nomina '{createDto.CodeUser}' is already in use.");
+            }
+
             var role = await _authContext.Roles.FindAsync(createDto.RoleId);
 
             if (role == null)
@@ -46,14 +51,15 @@ namespace LogicDomain._00_DataUPM
 
             var user = new AuthUser
             {
-                UserName = string.Concat("UPM",createDto.Email.ToUpper()),
+                UserName = createDto.UserName,
                 Email = createDto.Email,
                 PrettyName = createDto.PrettyName.ToUpper(),
                 Active = true,
                 CreateBy = createDto.CreateBy,
                 UpdateBy = createDto.CreateBy, // Initially same as CreateBy
                 CreateDate = DateTime.UtcNow,
-                UpdateDate = DateTime.UtcNow
+                UpdateDate = DateTime.UtcNow,
+                CodeUser = createDto.CodeUser,
             };
 
             var newUser = await _userManager.CreateAsync(user, createDto.Password);
@@ -82,7 +88,8 @@ namespace LogicDomain._00_DataUPM
                 CreateBy = user.CreateBy,
                 CreateDate = user.CreateDate,
                 UpdateBy = user.UpdateBy,
-                UpdateDate = user.UpdateDate
+                UpdateDate = user.UpdateDate,
+                CodeUser = user.CodeUser,
             };
         }
 
@@ -107,7 +114,8 @@ namespace LogicDomain._00_DataUPM
                         UpdateBy = r.u.UpdateBy,
                         UpdateDate = r.u.UpdateDate,
                         RoleName = role.Name,
-                        PrettyName = r.u.PrettyName
+                        PrettyName = r.u.PrettyName,
+                        CodeUser = r.u.CodeUser
                     }).ToListAsync();
 
             return users.Select(user => new DataSecurityUserDto
@@ -121,7 +129,8 @@ namespace LogicDomain._00_DataUPM
                 CreateBy = user.CreateBy,
                 CreateDate = user.CreateDate,
                 UpdateBy = user.UpdateBy,
-                UpdateDate = user.UpdateDate
+                UpdateDate = user.UpdateDate,
+                CodeUser = user.CodeUser
             }).ToList();
         }
 
@@ -146,7 +155,8 @@ namespace LogicDomain._00_DataUPM
                         CreateDate = r.u.CreateDate,
                         UpdateBy = r.u.UpdateBy,
                         UpdateDate = r.u.UpdateDate,
-                        RoleName = role.Name
+                        RoleName = role.Name,
+                        CodeUser = r.u.CodeUser
                     })
                 .FirstOrDefaultAsync(u => u.Id == id.ToString());
 
@@ -166,7 +176,8 @@ namespace LogicDomain._00_DataUPM
                 CreateBy = user.CreateBy,
                 CreateDate = user.CreateDate,
                 UpdateBy = user.UpdateBy,
-                UpdateDate = user.UpdateDate
+                UpdateDate = user.UpdateDate,
+                CodeUser = user.CodeUser
             };
         }
 
@@ -188,20 +199,26 @@ namespace LogicDomain._00_DataUPM
             {
                 throw new InvalidOperationException($"Email '{updateDto.Email}' is already in use.");
             }
+            if (await _authContext.Users.AnyAsync(u => u.Id != id.ToString() && u.CodeUser == updateDto.CodeUser))
+            {
+                throw new InvalidOperationException($"Nomina '{updateDto.CodeUser}' is already in use.");
+            }
+
             var role = await _authContext.Roles.FindAsync(updateDto.RoleId.ToString());
             if (role == null)
             {
                 throw new KeyNotFoundException("Role not found");
             }
 
-            user.UserName = string.Concat("UPM", updateDto.Email.ToUpper());
-            user.NormalizedUserName = string.Concat("UPM", updateDto.Email.ToUpper());
+            user.UserName = updateDto.UserName;
+            user.NormalizedUserName = updateDto.UserName.ToUpper();
             user.Email = updateDto.Email;
             user.NormalizedEmail = updateDto.Email.ToUpper();
             user.PrettyName = updateDto.PrettyName.ToUpper();
             user.Active = updateDto.Active;
             user.UpdateBy = updateDto.UpdateBy;
             user.UpdateDate = DateTime.UtcNow;
+            user.CodeUser = updateDto.CodeUser;
 
             user.PasswordHash = _passwordHasher.HashPassword(user, updateDto.Password);
 
@@ -225,7 +242,8 @@ namespace LogicDomain._00_DataUPM
                 CreateBy = user.CreateBy,
                 CreateDate = user.CreateDate,
                 UpdateBy = user.UpdateBy,
-                UpdateDate = user.UpdateDate
+                UpdateDate = user.UpdateDate,
+                CodeUser = user.CodeUser,
             };
         }
     }

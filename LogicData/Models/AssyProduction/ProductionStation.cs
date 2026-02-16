@@ -1,4 +1,5 @@
 ﻿using Entity.Models._04_AssyProduction;
+using LogicData.Models.AssyProduction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,5 +28,6 @@ namespace Entity.Models.AssyProduction
 
         public virtual ICollection<ProductionRegister> PrductionRegisters { get; set; } = new List<ProductionRegister>();
         public virtual ICollection<DowntimeRegister> DowntimeRegisters { get; set; } = new List<DowntimeRegister>();
+        public virtual ICollection<CompleteRackRegister> CompleteRackRegisters { get; set; } = new List<CompleteRackRegister>();
     }
 }

@@ -11,5 +11,7 @@ namespace Entity.Dtos._00_DataUPM
         public bool Active { get; set; }
         public Guid RoleId { get; set; }
         public string UpdateBy { get; set; } = string.Empty;
+        public string CodeUser { get; set; } = string.Empty;
+
     }
 }

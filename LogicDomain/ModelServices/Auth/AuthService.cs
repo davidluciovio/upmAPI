@@ -70,6 +70,58 @@ namespace LogicDomain
             return "Usuario registrado exitosamente";
         }
 
+        public async Task<string> LoginAuthenticatedUser(string codeUser)
+        {
+            var user = await _userManager.FindByNameAsync(codeUser);
+
+            if (user == null) throw new UnauthorizedAccessException("Usuario no encontrado para token generation."); // Should not happen if LDAP auth was successful and user was synced
+
+            // 1. Obtener claims base (ID, email...)
+            var authClaims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+                new Claim(JwtRegisteredClaimNames.Name, user.PrettyName!),
+            };
+
+            // 2. Obtener roles del usuario (ej. ["Vendedor", "Contador"])
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var roleName in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+
+                // 3. ¡LA MAGIA! Obtener los permisos (claims) de CADA rol
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+                    // Agregamos solo los claims que sean de tipo "Permiso"
+                    var permisosClaims = roleClaims.Where(c => c.Type == "Permiso");
+                    authClaims.AddRange(permisosClaims);
+                }
+            }
+
+            // 4. Generar el JWT con TODOS los claims (roles y permisos)
+            if (string.IsNullOrEmpty(_configuration["Jwt:Issuer"]) || string.IsNullOrEmpty(_configuration["Jwt:Audience"]))
+            {
+                throw new Exception("Configuración JWT incompleta en el servidor.");
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: authClaims,
+                expires: DateTime.Now.AddHours(10),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         public async Task<string> Login(string codeUser, string password)
         {
             var user = await _userManager.FindByEmailAsync(codeUser);

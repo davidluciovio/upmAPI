@@ -16,5 +16,6 @@ namespace Entity.Models.Auth
         public string UpdateBy { get; set; } = string.Empty;
 
         public string PrettyName { get; set; } = string.Empty;
+        public string CodeUser { get; set; } = string.Empty;
     }
 }
