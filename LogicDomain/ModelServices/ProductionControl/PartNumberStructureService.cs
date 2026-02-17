@@ -1,7 +1,10 @@
+using Entity.Dtos.AssyProduction;
 using Entity.Dtos.ModelDtos.ProductionControl.PartNumberStructure;
+using Entity.Dtos.ProductionControl;
 using Entity.Interfaces;
 using Entity.Models.ProductionControl;
 using LogicData.Context;
+using LogicDomain.AssyProduction;
 using LogicDomain.ProductionControl;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,52 +16,63 @@ namespace LogicDomain.ModelServices.ProductionControl
 {
     public class PartNumberStructureService : IService<PartNumberStructureResponseDto, PartNumberStructureRequestDto>
     {
-        private readonly ProductionControlContext _context;
+        private readonly ProductionControlContext _contextProductionControl;
+        private readonly AssyProductionContext _contextAssyProduction;
         private readonly MaterialSupplierService _materialSupplierService;
         private readonly PartNumberLogisticsService _partNumberLogisticsService;
+        private readonly IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> _productionStationService;
 
         public PartNumberStructureService(
             ProductionControlContext context,
             MaterialSupplierService materialSupplierService,
-            PartNumberLogisticsService partNumberLogisticsService)
+            PartNumberLogisticsService partNumberLogisticsService,
+            IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> productionStationService)
         {
-            _context = context;
+            _contextProductionControl = context;
             _materialSupplierService = materialSupplierService;
             _partNumberLogisticsService = partNumberLogisticsService;
+            _productionStationService = productionStationService;
         }
 
         public async Task<PartNumberStructureResponseDto> Create(PartNumberStructureRequestDto createDto)
         {
             // Validation for duplicate entries
-            if (await _context.PartNumberStructures.AnyAsync(pne =>
-                pne.PartNumberLogisticId == createDto.PartNumberLogisticId &&
-                pne.CompletePartId == createDto.CompletePartId &&
+            if (await _contextProductionControl.PartNumberStructures.AnyAsync(pne =>
+                pne.PartNumberLogisticsId == createDto.PartNumberLogisticId &&
+                pne.ProductionStationId == createDto.ProductionStationId &&
                 pne.MaterialSuplierId == createDto.MaterialSuplierId))
             {
-                throw new InvalidOperationException($"PartNumberStructure with PartNumberLogisticId '{createDto.PartNumberLogisticId}', CompletePartId '{createDto.CompletePartId}' and MaterialSuplierId '{createDto.MaterialSuplierId}' already exists.");
+                throw new InvalidOperationException($"PartNumberStructure with PartNumberLogisticId '{createDto.PartNumberLogisticId}', ProductionStationId '{createDto.ProductionStationId}' and MaterialSuplierId '{createDto.MaterialSuplierId}' already exists.");
             }
 
             var newPartNumberStructure = new PartNumberStructure
             {
-                PartNumberLogisticId = createDto.PartNumberLogisticId,
-                CompletePartId = createDto.CompletePartId,
-                CompletePartName = createDto.CompletePartName,
-                Quantity = createDto.Quantity,
-                MaterialSuplierId = createDto.MaterialSuplierId,
-                CreateBy = createDto.CreateBy,
+                Id = Guid.NewGuid(),
                 Active = true,
-                CreateDate = DateTime.UtcNow
+                CreateBy = createDto.CreateBy,
+                CreateDate = DateTime.UtcNow,
+                UpdateBy = createDto.CreateBy,
+                UpdateDate = DateTime.UtcNow,
+
+                PartNumberName = createDto.PartNumberName,
+                PartNumberDescription = createDto.PartNumberDescription,
+
+                ProductionStationId = createDto.ProductionStationId,
+                PartNumberLogisticsId = createDto.PartNumberLogisticId,
+                PartNumberLogistics = await _contextProductionControl.partNumberLogistics.FindAsync(createDto.PartNumberLogisticId),
+                MaterialSuplierId = createDto.MaterialSuplierId,
+                MaterialSupplier = await _contextProductionControl.MaterialSuppliers.FindAsync(createDto.MaterialSuplierId),
             };
 
-            _context.PartNumberStructures.Add(newPartNumberStructure);
-            await _context.SaveChangesAsync();
+            _contextProductionControl.PartNumberStructures.Add(newPartNumberStructure);
+            await _contextProductionControl.SaveChangesAsync();
 
             return await MapToDto(newPartNumberStructure);
         }
 
         public async Task<bool> Delete(Guid id)
         {
-            var partNumberStructure = await _context.PartNumberStructures.FindAsync(id);
+            var partNumberStructure = await _contextProductionControl.PartNumberStructures.FindAsync(id);
             if (partNumberStructure == null)
             {
                 return false;
@@ -66,52 +80,31 @@ namespace LogicDomain.ModelServices.ProductionControl
 
             partNumberStructure.Active = false; // Soft delete
             partNumberStructure.UpdateDate = DateTime.UtcNow;
-            // No update by field for delete based on MaterialSupplierService delete method
 
-            _context.Entry(partNumberStructure).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _contextProductionControl.Entry(partNumberStructure).State = EntityState.Modified;
+            await _contextProductionControl.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<List<PartNumberStructureResponseDto>> GetAlls()
         {
-            var partNumberStructures = await _context.PartNumberStructures
+            var partNumberStructures = await _contextProductionControl.PartNumberStructures
                 .Where(pne => pne.Active)
                 .ToListAsync();
 
-            var materialSupplierIds = partNumberStructures.Select(pns => pns.MaterialSuplierId).Distinct().ToList();
-            var partNumberLogisticIds = partNumberStructures.Select(pns => pns.PartNumberLogisticId).Distinct().ToList();
-
-            var materialSuppliers = await _context.MaterialSuppliers
-                .Where(ms => materialSupplierIds.Contains(ms.Id))
-                .ToDictionaryAsync(ms => ms.Id);
-
-            var partNumberLogistics = await _context.partNumberLogistics
-                .Where(pnl => partNumberLogisticIds.Contains(pnl.Id))
-                .ToDictionaryAsync(pnl => pnl.Id);
-
-            return partNumberStructures.Select(pns => new PartNumberStructureResponseDto
+            var dtos = new List<PartNumberStructureResponseDto>();
+            foreach (var pns in partNumberStructures)
             {
-                Id = pns.Id,
-                Active = pns.Active,
-                CreateDate = pns.CreateDate,
-                CreateBy = pns.CreateBy,
-                UpdateDate = pns.UpdateDate,
-                UpdateBy = pns.UpdateBy,
-                PartNumberLogisticId = pns.PartNumberLogisticId,
-                CompletePartId = pns.CompletePartId,
-                CompletePartName = pns.CompletePartName,
-                Quantity = pns.Quantity,
-                MaterialSuplierId = pns.MaterialSuplierId,
-                MaterialSupplierDescription = materialSuppliers.TryGetValue(pns.MaterialSuplierId, out var supplier) ? supplier.MaterialSupplierDescription : "N/A",
-                PartNumberLogisticDescription = partNumberLogistics.TryGetValue(pns.PartNumberLogisticId, out var logistic) ? logistic.PartNumberId.ToString() : "N/A"
-            }).ToList();
+                dtos.Add(await MapToDto(pns));
+            }
+
+            return dtos;
         }
 
         public async Task<PartNumberStructureResponseDto?> GetById(Guid id)
         {
-            var partNumberStructure = await _context.PartNumberStructures
+            var partNumberStructure = await _contextProductionControl.PartNumberStructures
                 .FirstOrDefaultAsync(pne => pne.Id == id && pne.Active);
 
             return partNumberStructure != null ? await MapToDto(partNumberStructure) : null;
@@ -119,32 +112,32 @@ namespace LogicDomain.ModelServices.ProductionControl
 
         public async Task<PartNumberStructureResponseDto> Update(Guid id, PartNumberStructureRequestDto updateDto)
         {
-            var partNumberStructure = await _context.PartNumberStructures.FindAsync(id);
+            var partNumberStructure = await _contextProductionControl.PartNumberStructures.FindAsync(id);
             if (partNumberStructure == null)
             {
                 throw new KeyNotFoundException($"PartNumberStructure with ID '{id}' not found.");
             }
 
             // Validation for duplicate entries, excluding the current entity
-            if (await _context.PartNumberStructures.AnyAsync(pne =>
+            if (await _contextProductionControl.PartNumberStructures.AnyAsync(pne =>
                 pne.Id != id &&
-                pne.PartNumberLogisticId == updateDto.PartNumberLogisticId &&
-                pne.CompletePartId == updateDto.CompletePartId &&
+                pne.PartNumberLogisticsId == updateDto.PartNumberLogisticId &&
+                pne.ProductionStationId == updateDto.ProductionStationId &&
                 pne.MaterialSuplierId == updateDto.MaterialSuplierId))
             {
-                throw new InvalidOperationException($"Another PartNumberStructure with PartNumberLogisticId '{updateDto.PartNumberLogisticId}', CompletePartId '{updateDto.CompletePartId}' and MaterialSuplierId '{updateDto.MaterialSuplierId}' already exists.");
+                throw new InvalidOperationException($"Another PartNumberStructure with PartNumberLogisticId '{updateDto.PartNumberLogisticId}', ProductionStationId '{updateDto.ProductionStationId}' and MaterialSuplierId '{updateDto.MaterialSuplierId}' already exists.");
             }
 
-            partNumberStructure.PartNumberLogisticId = updateDto.PartNumberLogisticId;
-            partNumberStructure.CompletePartId = updateDto.CompletePartId;
-            partNumberStructure.CompletePartName = updateDto.CompletePartName;
-            partNumberStructure.Quantity = updateDto.Quantity;
+            partNumberStructure.PartNumberLogisticsId = updateDto.PartNumberLogisticId;
+            partNumberStructure.ProductionStationId = updateDto.ProductionStationId;
             partNumberStructure.MaterialSuplierId = updateDto.MaterialSuplierId;
+            partNumberStructure.PartNumberName = updateDto.PartNumberName;
+            partNumberStructure.PartNumberDescription = updateDto.PartNumberDescription;
             partNumberStructure.Active = updateDto.Active;
             partNumberStructure.UpdateDate = DateTime.UtcNow;
             partNumberStructure.UpdateBy = updateDto.UpdateBy;
 
-            await _context.SaveChangesAsync();
+            await _contextProductionControl.SaveChangesAsync();
 
             return await MapToDto(partNumberStructure);
         }
@@ -152,8 +145,8 @@ namespace LogicDomain.ModelServices.ProductionControl
         private async Task<PartNumberStructureResponseDto> MapToDto(PartNumberStructure partNumberStructure)
         {
             var materialSupplier = await _materialSupplierService.GetById(partNumberStructure.MaterialSuplierId);
-            // Assuming PartNumberLogisticsService GetById returns a DTO that has a description.
-            var partNumberLogistic = await _partNumberLogisticsService.GetById(partNumberStructure.PartNumberLogisticId);
+            var partNumberLogistic = await _partNumberLogisticsService.GetById(partNumberStructure.PartNumberLogisticsId);
+            var productionStation = await _productionStationService.GetById(partNumberStructure.ProductionStationId);
 
             return new PartNumberStructureResponseDto
             {
@@ -161,15 +154,12 @@ namespace LogicDomain.ModelServices.ProductionControl
                 Active = partNumberStructure.Active,
                 CreateDate = partNumberStructure.CreateDate,
                 CreateBy = partNumberStructure.CreateBy,
-                UpdateDate = partNumberStructure.UpdateDate,
-                UpdateBy = partNumberStructure.UpdateBy,
-                PartNumberLogisticId = partNumberStructure.PartNumberLogisticId,
-                CompletePartId = partNumberStructure.CompletePartId,
-                CompletePartName = partNumberStructure.CompletePartName,
-                Quantity = partNumberStructure.Quantity,
-                MaterialSuplierId = partNumberStructure.MaterialSuplierId,
+                ProductionStationId = partNumberStructure.ProductionStationId,
+                ProductionStation = productionStation,
+                PartNumberDescription = partNumberStructure.PartNumberDescription,
+                PartNumberLogisticId = partNumberStructure.PartNumberLogisticsId,
+                PartNumberLogistic = partNumberLogistic,
                 MaterialSupplierDescription = materialSupplier?.MaterialSupplierDescription ?? "N/A",
-                PartNumberLogisticDescription = partNumberLogistic?.PartNumber ?? "N/A"
             };
         }
     }

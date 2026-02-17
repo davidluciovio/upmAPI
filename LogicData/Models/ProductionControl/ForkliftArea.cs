@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Models.ProductionControl
+namespace LogicData.Models.ProductionControl
 {
-    public class MaterialSupplier
+    public class ForkliftArea
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
@@ -15,8 +15,7 @@ namespace Entity.Models.ProductionControl
         public DateTime UpdateDate { get; set; }
         public string UpdateBy { get; set; } = string.Empty;
 
-        public string MaterialSupplierDescription { get; set; } = string.Empty;
-        public virtual ICollection<PartNumberStructure> PartNumberStructures { get; set; } = new List<PartNumberStructure>();
-
+        public Guid UserId { get; set; }
+        public Guid DataProductionAreaId { get; set; }
     }
 }

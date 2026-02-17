@@ -28,7 +28,7 @@ namespace LogicDomain.ModelServices.ProductionControl
 
             var newMaterialSupplier = new MaterialSupplier
             {
-                MaterialSupplierDescription = createDto.MaterialSupplierDescription,
+                MaterialSupplierDescription = createDto.MaterialSupplierDescription.ToUpper(),
                 CreateBy = createDto.CreateBy,
                 Active = true,
                 CreateDate = DateTime.UtcNow

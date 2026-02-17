@@ -22,7 +22,7 @@ namespace Entity.Models.ProductionControl
         public float SNP { get; set; }
 
         public virtual ICollection<ComponentAlert> ComponentAlerts { get; set; } = new List<ComponentAlert>();
-        public virtual ICollection<PartNumberStructure> PartNumberEstructures { get; set; } = new List<PartNumberStructure>();
+        public virtual ICollection<PartNumberStructure> PartNumberStructures { get; set; } = new List<PartNumberStructure>();
     }
 }
 

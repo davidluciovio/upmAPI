@@ -15,12 +15,14 @@ namespace Entity.Models.ProductionControl
         public DateTime UpdateDate { get; set; }
         public string UpdateBy { get; set; } = string.Empty;
 
-        public Guid PartNumberLogisticId { get; set; }
-        public virtual PartNumberLogistics PartNumberLogistics { get; set; } = new PartNumberLogistics();
-        public Guid CompletePartId { get; set; }
-        public string CompletePartName { get; set; } = string.Empty;
 
-        public int Quantity { get; set; }
+        public string PartNumberName { get; set; } = string.Empty;
+        public string PartNumberDescription { get; set; } = string.Empty;
+
+        public Guid ProductionStationId { get; set; }
+        
+        public Guid PartNumberLogisticsId { get; set; }
+        public virtual PartNumberLogistics PartNumberLogistics { get; set; } = new PartNumberLogistics();
 
         public Guid MaterialSuplierId { get; set; }
         public virtual MaterialSupplier MaterialSupplier { get; set; } = new MaterialSupplier();

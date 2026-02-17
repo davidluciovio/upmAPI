@@ -110,7 +110,7 @@ builder.Services.AddIdentity<AuthUser, AuthRole>(options =>
     {
         options.Password.RequireDigit = true;
         options.Password.RequireLowercase = false;
-        options.Password.RequireUppercase = true;
+        options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequiredLength = 5;
     })
@@ -209,6 +209,7 @@ builder.Services.AddScoped<LdapService>();
 builder.Services.AddScoped<PartNumberLogisticsService>();
 builder.Services.AddScoped<MaterialSupplierService>();
 builder.Services.AddScoped<PartNumberStructureService>();
+builder.Services.AddScoped<ForkliftAreaService>();
 
 
 //**************************************************************** ***********************************

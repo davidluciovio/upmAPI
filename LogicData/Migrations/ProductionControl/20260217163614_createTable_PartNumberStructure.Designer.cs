@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogicData.Migrations.ProductionControl
 {
     [DbContext(typeof(ProductionControlContext))]
-    [Migration("20260217040213_renameTable_PartNumberStructure")]
-    partial class renameTable_PartNumberStructure
+    [Migration("20260217163614_createTable_PartNumberStructure")]
+    partial class createTable_PartNumberStructure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -209,14 +209,6 @@ namespace LogicData.Migrations.ProductionControl
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("CompletePartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CompletePartName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -227,14 +219,20 @@ namespace LogicData.Migrations.ProductionControl
                     b.Property<Guid>("MaterialSuplierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PartNumberLogisticId")
+                    b.Property<string>("PartNumberDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PartNumberLogisticsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PartNumberLogisticsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PartNumberName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductionStationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UpdateBy")
                         .IsRequired()
@@ -247,9 +245,9 @@ namespace LogicData.Migrations.ProductionControl
 
                     b.HasIndex("MaterialSuplierId");
 
-                    b.HasIndex("PartNumberLogisticId");
-
                     b.HasIndex("PartNumberLogisticsId");
+
+                    b.HasIndex("ProductionStationId");
 
                     b.ToTable("PartNumberStructure", "upm_productionControl");
                 });
@@ -268,31 +266,32 @@ namespace LogicData.Migrations.ProductionControl
             modelBuilder.Entity("Entity.Models.ProductionControl.PartNumberStructure", b =>
                 {
                     b.HasOne("Entity.Models.ProductionControl.MaterialSupplier", "MaterialSupplier")
-                        .WithMany()
+                        .WithMany("PartNumberStructures")
                         .HasForeignKey("MaterialSuplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Entity.Models.ProductionControl.PartNumberLogistics", "PartNumberLogistics")
-                        .WithMany()
-                        .HasForeignKey("PartNumberLogisticId")
+                        .WithMany("PartNumberStructures")
+                        .HasForeignKey("PartNumberLogisticsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Entity.Models.ProductionControl.PartNumberLogistics", null)
-                        .WithMany("PartNumberEstructures")
-                        .HasForeignKey("PartNumberLogisticsId");
 
                     b.Navigation("MaterialSupplier");
 
                     b.Navigation("PartNumberLogistics");
                 });
 
+            modelBuilder.Entity("Entity.Models.ProductionControl.MaterialSupplier", b =>
+                {
+                    b.Navigation("PartNumberStructures");
+                });
+
             modelBuilder.Entity("Entity.Models.ProductionControl.PartNumberLogistics", b =>
                 {
                     b.Navigation("ComponentAlerts");
 
-                    b.Navigation("PartNumberEstructures");
+                    b.Navigation("PartNumberStructures");
                 });
 #pragma warning restore 612, 618
         }

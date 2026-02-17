@@ -206,14 +206,6 @@ namespace LogicData.Migrations.ProductionControl
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("CompletePartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CompletePartName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -224,14 +216,20 @@ namespace LogicData.Migrations.ProductionControl
                     b.Property<Guid>("MaterialSuplierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PartNumberLogisticId")
+                    b.Property<string>("PartNumberDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PartNumberLogisticsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PartNumberLogisticsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PartNumberName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductionStationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UpdateBy")
                         .IsRequired()
@@ -244,11 +242,49 @@ namespace LogicData.Migrations.ProductionControl
 
                     b.HasIndex("MaterialSuplierId");
 
-                    b.HasIndex("PartNumberLogisticId");
-
                     b.HasIndex("PartNumberLogisticsId");
 
+                    b.HasIndex("ProductionStationId");
+
                     b.ToTable("PartNumberStructure", "upm_productionControl");
+                });
+
+            modelBuilder.Entity("LogicData.Models.ProductionControl.ForkliftArea", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DataProductionAreaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UpdateBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DataProductionAreaId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ForkliftArea", "upm_productionControl");
                 });
 
             modelBuilder.Entity("Entity.Models.ProductionControl.ComponentAlert", b =>
@@ -265,31 +301,32 @@ namespace LogicData.Migrations.ProductionControl
             modelBuilder.Entity("Entity.Models.ProductionControl.PartNumberStructure", b =>
                 {
                     b.HasOne("Entity.Models.ProductionControl.MaterialSupplier", "MaterialSupplier")
-                        .WithMany()
+                        .WithMany("PartNumberStructures")
                         .HasForeignKey("MaterialSuplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Entity.Models.ProductionControl.PartNumberLogistics", "PartNumberLogistics")
-                        .WithMany()
-                        .HasForeignKey("PartNumberLogisticId")
+                        .WithMany("PartNumberStructures")
+                        .HasForeignKey("PartNumberLogisticsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Entity.Models.ProductionControl.PartNumberLogistics", null)
-                        .WithMany("PartNumberEstructures")
-                        .HasForeignKey("PartNumberLogisticsId");
 
                     b.Navigation("MaterialSupplier");
 
                     b.Navigation("PartNumberLogistics");
                 });
 
+            modelBuilder.Entity("Entity.Models.ProductionControl.MaterialSupplier", b =>
+                {
+                    b.Navigation("PartNumberStructures");
+                });
+
             modelBuilder.Entity("Entity.Models.ProductionControl.PartNumberLogistics", b =>
                 {
                     b.Navigation("ComponentAlerts");
 
-                    b.Navigation("PartNumberEstructures");
+                    b.Navigation("PartNumberStructures");
                 });
 #pragma warning restore 612, 618
         }

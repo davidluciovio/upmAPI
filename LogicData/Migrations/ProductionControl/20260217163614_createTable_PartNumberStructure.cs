@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LogicData.Migrations.ProductionControl
 {
     /// <inheritdoc />
-    public partial class createTable_PartNumberEstructure_MaterialSuplier : Migration
+    public partial class createTable_PartNumberStructure : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "MaterialSupplier",
+                name: "MaterialSuplier",
                 schema: "upm_productionControl",
                 columns: table => new
                 {
@@ -22,15 +22,15 @@ namespace LogicData.Migrations.ProductionControl
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaterialSupplierDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MaterialSupplierDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MaterialSupplier", x => x.Id);
+                    table.PrimaryKey("PK_MaterialSuplier", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PartNumberEstructure",
+                name: "PartNumberStructure",
                 schema: "upm_productionControl",
                 columns: table => new
                 {
@@ -40,26 +40,24 @@ namespace LogicData.Migrations.ProductionControl
                     CreateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PartNumberLogisticId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PartNumberName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    PartNumberDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductionStationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PartNumberLogisticsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompletePartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompletePartName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    MaterialSuplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MaterialSupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    MaterialSuplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PartNumberEstructure", x => x.Id);
+                    table.PrimaryKey("PK_PartNumberStructure", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PartNumberEstructure_MaterialSupplier_MaterialSupplierId",
-                        column: x => x.MaterialSupplierId,
+                        name: "FK_PartNumberStructure_MaterialSuplier_MaterialSuplierId",
+                        column: x => x.MaterialSuplierId,
                         principalSchema: "upm_productionControl",
-                        principalTable: "MaterialSupplier",
+                        principalTable: "MaterialSuplier",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PartNumberEstructure_PartNumberLogistics_PartNumberLogisticsId",
+                        name: "FK_PartNumberStructure_PartNumberLogistics_PartNumberLogisticsId",
                         column: x => x.PartNumberLogisticsId,
                         principalSchema: "upm_productionControl",
                         principalTable: "PartNumberLogistics",
@@ -68,27 +66,33 @@ namespace LogicData.Migrations.ProductionControl
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PartNumberEstructure_MaterialSupplierId",
+                name: "IX_PartNumberStructure_MaterialSuplierId",
                 schema: "upm_productionControl",
-                table: "PartNumberEstructure",
-                column: "MaterialSupplierId");
+                table: "PartNumberStructure",
+                column: "MaterialSuplierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PartNumberEstructure_PartNumberLogisticsId",
+                name: "IX_PartNumberStructure_PartNumberLogisticsId",
                 schema: "upm_productionControl",
-                table: "PartNumberEstructure",
+                table: "PartNumberStructure",
                 column: "PartNumberLogisticsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PartNumberStructure_ProductionStationId",
+                schema: "upm_productionControl",
+                table: "PartNumberStructure",
+                column: "ProductionStationId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PartNumberEstructure",
+                name: "PartNumberStructure",
                 schema: "upm_productionControl");
 
             migrationBuilder.DropTable(
-                name: "MaterialSupplier",
+                name: "MaterialSuplier",
                 schema: "upm_productionControl");
         }
     }
