@@ -59,7 +59,7 @@ namespace LogicDomain.ModelServices.ProductionControl
 
                 ProductionStationId = createDto.ProductionStationId,
                 PartNumberLogisticsId = createDto.PartNumberLogisticId,
-                PartNumberLogistics = await _contextProductionControl.partNumberLogistics.FindAsync(createDto.PartNumberLogisticId),
+                PartNumberLogistics = await _contextProductionControl.PartNumberLogistics.FindAsync(createDto.PartNumberLogisticId),
                 MaterialSuplierId = createDto.MaterialSuplierId,
                 MaterialSupplier = await _contextProductionControl.MaterialSuppliers.FindAsync(createDto.MaterialSuplierId),
             };

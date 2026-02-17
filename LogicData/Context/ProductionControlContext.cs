@@ -18,7 +18,7 @@ namespace LogicData.Context
         }
 
         public DbSet<ComponentAlert> ComponentAlerts { get; set; }
-        public DbSet<PartNumberLogistics> partNumberLogistics { get; set; }
+        public DbSet<PartNumberLogistics> PartNumberLogistics { get; set; }
         public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
         public DbSet<MaterialSupplier> MaterialSuppliers { get; set; }
         public DbSet<PartNumberStructure> PartNumberStructures { get; set; }

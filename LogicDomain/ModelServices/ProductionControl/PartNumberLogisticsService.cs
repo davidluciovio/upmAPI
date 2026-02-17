@@ -36,7 +36,7 @@ namespace LogicDomain.ProductionControl
                 UpdateBy = createDto.UpdateBy,
                 UpdateDate = DateTime.UtcNow
             };
-            _productionControlContext.partNumberLogistics.Add(partNumberLogistic);
+            _productionControlContext.PartNumberLogistics.Add(partNumberLogistic);
             await _productionControlContext.SaveChangesAsync();
 
             return new PartNumberLogisticsResponseDto
@@ -58,7 +58,7 @@ namespace LogicDomain.ProductionControl
         public async Task<List<PartNumberLogisticsResponseDto>> GetAlls()
         {
             // 1. Traer la lista principal (Rápido, sin rastreo de cambios)
-            var logs = await _productionControlContext.partNumberLogistics
+            var logs = await _productionControlContext.PartNumberLogistics
                                                       .AsNoTracking()
                                                       .ToListAsync();
 
@@ -114,7 +114,7 @@ namespace LogicDomain.ProductionControl
 
         public async Task<PartNumberLogisticsResponseDto?> GetById(Guid id)
         {
-            var partNumberLogistic = await _productionControlContext.partNumberLogistics.FindAsync(id);
+            var partNumberLogistic = await _productionControlContext.PartNumberLogistics.FindAsync(id);
             if (partNumberLogistic == null)
             {
                 throw new KeyNotFoundException("partNumberLogistic not found");
@@ -145,7 +145,7 @@ namespace LogicDomain.ProductionControl
 
         public async Task<PartNumberLogisticsResponseDto> Update(Guid id, PartNumberLogisticsUpdateDto updateDto)
         {
-            var partNumberLogistic = _productionControlContext.partNumberLogistics.Find(id);
+            var partNumberLogistic = _productionControlContext.PartNumberLogistics.Find(id);
             if (partNumberLogistic == null) throw new KeyNotFoundException("partNumberLogistic not found");
 
             var parNumber = _dataContext.ProductionPartNumbers
@@ -168,7 +168,7 @@ namespace LogicDomain.ProductionControl
             partNumberLogistic.UpdateBy = updateDto.UpdateBy;
             partNumberLogistic.UpdateDate = DateTime.UtcNow;
 
-            _productionControlContext.partNumberLogistics.Update(partNumberLogistic);
+            _productionControlContext.PartNumberLogistics.Update(partNumberLogistic);
             await _productionControlContext.SaveChangesAsync();
 
             return new PartNumberLogisticsResponseDto
