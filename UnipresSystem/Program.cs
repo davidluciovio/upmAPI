@@ -26,6 +26,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UnipresSystem.Data;
 using LogicDomain.SystemServices;
+using LogicDomain.ModelServices.ProductionControl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -195,7 +196,7 @@ builder.Services.AddScoped<IService<DataSecurityPermissionResponseDto, DataSecur
 builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, DataSecurityRoleClaimRequestDto>, DataSecurityRoleClaimService>();
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
-builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
+builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 
@@ -204,6 +205,8 @@ builder.Services.AddScoped<DowntimeCaptureService>();
 builder.Services.AddScoped<LdapService>();
 
 builder.Services.AddScoped<IComponentAlertService, LogicDomain.ModelServices.ComponentAlertService>();
+builder.Services.AddScoped<MaterialSupplierService>();
+builder.Services.AddScoped< PartNumberEstructureService>();
 
 
 //**************************************************************** ***********************************

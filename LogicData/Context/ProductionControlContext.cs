@@ -19,6 +19,8 @@ namespace LogicData.Context
         public DbSet<ComponentAlert> ComponentAlerts { get; set; }
         public DbSet<PartNumberLogistics> partNumberLogistics { get; set; }
         public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
+        public DbSet<MaterialSupplier> MaterialSuppliers { get; set; }
+        public DbSet<PartNumberEstructure> PartNumberEstructure { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -65,6 +67,32 @@ namespace LogicData.Context
                       .WithMany(i => i.ComponentAlerts)
                       .HasForeignKey(e => e.PartNumberLogisticsId);
 
+            });
+
+            builder.Entity<MaterialSupplier>(entity =>
+            {
+                entity.ToTable("MaterialSuplier");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.MaterialSupplierDescription).IsRequired().HasMaxLength(250);
+            });
+
+            builder.Entity<PartNumberEstructure>(entity =>
+            {
+                entity.ToTable("PartNumberEstructure");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PartNumberLogisticId).IsRequired();
+                entity.Property(e => e.CompletePartId).IsRequired();
+                entity.Property(e => e.CompletePartName).IsRequired().HasMaxLength(250);
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.MaterialSuplierId).IsRequired();
+
+                entity.HasOne(e => e.PartNumberLogistics)
+                      .WithMany()
+                      .HasForeignKey(e => e.PartNumberLogisticId);
+
+                entity.HasOne(e => e.MaterialSupplier)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaterialSuplierId);
             });
 
         }

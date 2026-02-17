@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LogicDomain.ProductionControl
 {
-    public class PartNumberLogisticsService : IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>
+    public class PartNumberLogisticsService : IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>
     {
         private readonly ProductionControlContext _productionControlContext;
         private readonly DataContext _dataContext;
@@ -22,7 +22,7 @@ namespace LogicDomain.ProductionControl
             _dataContext = dataContext;
         }
 
-        public async Task<PartNumberLogisticsDto> Create(PartNumberLogisticsCreateDto createDto)
+        public async Task<PartNumberLogisticsResponseDto> Create(PartNumberLogisticsCreateDto createDto)
         {
             var partNumberLogistic = new PartNumberLogistics
             {
@@ -39,7 +39,7 @@ namespace LogicDomain.ProductionControl
             _productionControlContext.partNumberLogistics.Add(partNumberLogistic);
             await _productionControlContext.SaveChangesAsync();
 
-            return new PartNumberLogisticsDto
+            return new PartNumberLogisticsResponseDto
             {
                 Id = partNumberLogistic.Id,
                 PartNumber = partNumberLogistic.PartNumberId.ToString(),
@@ -55,7 +55,7 @@ namespace LogicDomain.ProductionControl
         }
 
 
-        public async Task<List<PartNumberLogisticsDto>> GetAlls()
+        public async Task<List<PartNumberLogisticsResponseDto>> GetAlls()
         {
             // 1. Traer la lista principal (Rápido, sin rastreo de cambios)
             var logs = await _productionControlContext.partNumberLogistics
@@ -83,7 +83,7 @@ namespace LogicDomain.ProductionControl
                 .ToDictionaryAsync(k => k.Id, v => v.LocationDescription);
 
             // 4. Mapear los resultados en memoria (O(1) de velocidad gracias a los diccionarios)
-            var result = logs.Select(pna => new PartNumberLogisticsDto
+            var result = logs.Select(pna => new PartNumberLogisticsResponseDto
             {
                 Id = pna.Id,
 
@@ -112,14 +112,14 @@ namespace LogicDomain.ProductionControl
             return result;
         }
 
-        public async Task<PartNumberLogisticsDto?> GetById(Guid id)
+        public async Task<PartNumberLogisticsResponseDto?> GetById(Guid id)
         {
             var partNumberLogistic = await _productionControlContext.partNumberLogistics.FindAsync(id);
             if (partNumberLogistic == null)
             {
                 throw new KeyNotFoundException("partNumberLogistic not found");
             }
-            return new PartNumberLogisticsDto
+            return new PartNumberLogisticsResponseDto
             {
                 Id = partNumberLogistic.Id,
                 PartNumber = _dataContext.ProductionPartNumbers
@@ -143,7 +143,7 @@ namespace LogicDomain.ProductionControl
             };
         }
 
-        public async Task<PartNumberLogisticsDto> Update(Guid id, PartNumberLogisticsUpdateDto updateDto)
+        public async Task<PartNumberLogisticsResponseDto> Update(Guid id, PartNumberLogisticsUpdateDto updateDto)
         {
             var partNumberLogistic = _productionControlContext.partNumberLogistics.Find(id);
             if (partNumberLogistic == null) throw new KeyNotFoundException("partNumberLogistic not found");
@@ -171,7 +171,7 @@ namespace LogicDomain.ProductionControl
             _productionControlContext.partNumberLogistics.Update(partNumberLogistic);
             await _productionControlContext.SaveChangesAsync();
 
-            return new PartNumberLogisticsDto
+            return new PartNumberLogisticsResponseDto
             {
                 Id = partNumberLogistic.Id,
                 PartNumber = parNumber.PartNumberName,

@@ -10,9 +10,9 @@ namespace UnipresSystem.Controllers
     [Route("api/[controller]")]
     public class PartNumberAreaController : ControllerBase
     {
-        private readonly IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> _partNumberAreaService;
+        private readonly IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> _partNumberAreaService;
 
-        public PartNumberAreaController(IServiceCrud<PartNumberLogisticsDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> partNumberAreaService)
+        public PartNumberAreaController(IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto> partNumberAreaService)
         {
             _partNumberAreaService = partNumberAreaService;
         }

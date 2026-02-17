@@ -226,9 +226,22 @@ namespace LogicDomain._00_DataUPM
 
             if (userRole != null)
             {
-                userRole.RoleId = updateDto.RoleId.ToString();
-                _authContext.UserRoles.Update(userRole);
+                // 1. Remove the old role record
+                _authContext.UserRoles.Remove(userRole);
+
+                // 2. We must save changes (or at least ensure the state is handled) 
+                // before adding the new composite key to avoid conflicts.
+                await _authContext.SaveChangesAsync();
+
+                // 3. Add the new role record
+                var newUserRole = new IdentityUserRole<string>
+                {
+                    UserId = user.Id,
+                    RoleId = updateDto.RoleId.ToString()
+                };
+                await _authContext.UserRoles.AddAsync(newUserRole);
             }
+
             await _authContext.SaveChangesAsync();
 
             return new DataSecurityUserDto

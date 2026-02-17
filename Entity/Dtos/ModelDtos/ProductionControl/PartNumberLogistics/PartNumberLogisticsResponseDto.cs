@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos.ProductionControl
 {
-    public class PartNumberLogisticsDto
+    public class PartNumberLogisticsResponseDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }

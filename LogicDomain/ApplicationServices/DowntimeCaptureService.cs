@@ -163,12 +163,12 @@ namespace LogicDomain.ApplicationServices
             };
 
             var partNumberProductionsWithOutput = responseDowntimeCaptureResponse.partNumberDataProductions
-                .Where(p => p.hourlyProductionDatas.Any(h => h.ProducedQuantity > 0))
+                .Where(p => p.hourlyProductionDatas.Any(h => h.StartProductionDate <= DateTime.Now))
                 .ToList();
 
             partNumberProductionsWithOutput.ForEach(p =>
             {
-                p.hourlyProductionDatas = p.hourlyProductionDatas.Where(h => h.ProducedQuantity > 0).ToList();
+                p.hourlyProductionDatas = p.hourlyProductionDatas.Where(h => h.StartProductionDate <= DateTime.Now).ToList();
             });
 
             return new DowntimeCaptureResponseDto
