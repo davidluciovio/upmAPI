@@ -1,8 +1,8 @@
 using System;
 
-namespace Entity.ModelDtos.ProductionControl
+namespace Entity.Dtos.ModelDtos.ProductionControl.MaterialSupplier
 {
-    public class MaterialSupplierDto
+    public class MaterialSupplierResponseDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }

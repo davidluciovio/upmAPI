@@ -1,5 +1,5 @@
-﻿using Entity.Interfaces;
-using Entity.ModelDtos;
+﻿using Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert;
+using Entity.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
+using Entity.Dtos.ModelDtos.ProductionControl.MaterialSupplier;
 using Entity.Interfaces;
-using Entity.ModelDtos.ProductionControl;
 using Entity.Models.ProductionControl;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
@@ -10,27 +10,28 @@ using System.Threading.Tasks;
 
 namespace LogicDomain.ModelServices.ProductionControl
 {
-    public class MaterialSupplierService
+    public class MaterialSupplierService : IService<MaterialSupplierResponseDto, MaterialSupplierRequestDto>
     {
         private readonly ProductionControlContext _context;
-        private readonly string _user = "System"; // Consistent with existing services
 
         public MaterialSupplierService(ProductionControlContext context)
         {
             _context = context;
         }
 
-        public async Task<MaterialSupplierDto> Create(MaterialSupplierCreateDto createDto)
+        public async Task<MaterialSupplierResponseDto> Create(MaterialSupplierRequestDto createDto)
         {
+            if (await _context.MaterialSuppliers.AnyAsync(ms => ms.MaterialSupplierDescription == createDto.MaterialSupplierDescription))
+            {
+                throw new InvalidOperationException($"MaterialSupplier with description '{createDto.MaterialSupplierDescription}' already exists.");
+            }
+
             var newMaterialSupplier = new MaterialSupplier
             {
-                Id = Guid.NewGuid(),
-                Active = createDto.Active,
-                CreateDate = DateTime.UtcNow,
+                MaterialSupplierDescription = createDto.MaterialSupplierDescription,
                 CreateBy = createDto.CreateBy,
-                UpdateDate = DateTime.UtcNow,
-                UpdateBy = _user,
-                MaterialSupplierDescription = createDto.MaterialSupplierDescription
+                Active = true,
+                CreateDate = DateTime.UtcNow
             };
 
             _context.MaterialSuppliers.Add(newMaterialSupplier);
@@ -48,48 +49,62 @@ namespace LogicDomain.ModelServices.ProductionControl
             }
 
             materialSupplier.Active = false; // Soft delete
-            materialSupplier.UpdateDate = DateTime.UtcNow;
-            materialSupplier.UpdateBy = _user;
+            
             _context.Entry(materialSupplier).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<IEnumerable<MaterialSupplierDto>> GetAlls()
+        public async Task<List<MaterialSupplierResponseDto>> GetAlls()
         {
-            var materialSuppliers = await _context.MaterialSuppliers.Where(ms => ms.Active).ToListAsync();
-            return materialSuppliers.Select(MapToDto).ToList();
+            return await _context.MaterialSuppliers
+                .Where(ms => ms.Active)
+                .Select(ms => new MaterialSupplierResponseDto
+                {
+                    Id = ms.Id,
+                    Active = ms.Active,
+                    CreateDate = ms.CreateDate,
+                    CreateBy = ms.CreateBy,
+                    UpdateDate = ms.UpdateDate,
+                    UpdateBy = ms.UpdateBy,
+                    MaterialSupplierDescription = ms.MaterialSupplierDescription
+                })
+                .ToListAsync();
         }
 
-        public async Task<MaterialSupplierDto> GetById(Guid id)
+        public async Task<MaterialSupplierResponseDto?> GetById(Guid id)
         {
             var materialSupplier = await _context.MaterialSuppliers.FirstOrDefaultAsync(ms => ms.Id == id && ms.Active);
             return materialSupplier != null ? MapToDto(materialSupplier) : null;
         }
 
-        public async Task<MaterialSupplierDto> Update(Guid id, MaterialSupplierUpdateDto updateDto)
+        public async Task<MaterialSupplierResponseDto> Update(Guid id, MaterialSupplierRequestDto updateDto)
         {
             var materialSupplier = await _context.MaterialSuppliers.FindAsync(id);
             if (materialSupplier == null)
             {
-                throw new Exception("Material Supplier not found");
+                throw new KeyNotFoundException($"Material Supplier with ID '{id}' not found.");
+            }
+            if (await _context.MaterialSuppliers.AnyAsync(m => m.Id != id && m.MaterialSupplierDescription == updateDto.MaterialSupplierDescription))
+            {
+                throw new InvalidOperationException($"Another MaterialSupplier with description '{updateDto.MaterialSupplierDescription}' already exists.");
             }
 
-            materialSupplier.Active = updateDto.Active;
+
             materialSupplier.MaterialSupplierDescription = updateDto.MaterialSupplierDescription;
             materialSupplier.UpdateDate = DateTime.UtcNow;
             materialSupplier.UpdateBy = updateDto.UpdateBy;
+            materialSupplier.Active = updateDto.Active;
 
-            _context.Entry(materialSupplier).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return MapToDto(materialSupplier);
         }
 
-        private MaterialSupplierDto MapToDto(MaterialSupplier materialSupplier)
+        private MaterialSupplierResponseDto MapToDto(MaterialSupplier materialSupplier)
         {
-            return new MaterialSupplierDto
+            return new MaterialSupplierResponseDto
             {
                 Id = materialSupplier.Id,
                 Active = materialSupplier.Active,

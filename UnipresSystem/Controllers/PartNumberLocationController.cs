@@ -1,4 +1,4 @@
-﻿using Entity.Dtos.ProductionControl;
+﻿using Entity.Dtos.ModelDtos.ProductionControl.ProductionLocation;
 using Entity.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;

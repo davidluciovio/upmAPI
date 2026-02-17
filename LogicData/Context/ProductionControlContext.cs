@@ -20,7 +20,7 @@ namespace LogicData.Context
         public DbSet<PartNumberLogistics> partNumberLogistics { get; set; }
         public DbSet<PartNumberLocation> PartNumberLocations { get; set; }
         public DbSet<MaterialSupplier> MaterialSuppliers { get; set; }
-        public DbSet<PartNumberEstructure> PartNumberEstructure { get; set; }
+        public DbSet<PartNumberStructure> PartNumberStructures { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -76,9 +76,9 @@ namespace LogicData.Context
                 entity.Property(e => e.MaterialSupplierDescription).IsRequired().HasMaxLength(250);
             });
 
-            builder.Entity<PartNumberEstructure>(entity =>
+            builder.Entity<PartNumberStructure>(entity =>
             {
-                entity.ToTable("PartNumberEstructure");
+                entity.ToTable("PartNumberStructure");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.PartNumberLogisticId).IsRequired();
                 entity.Property(e => e.CompletePartId).IsRequired();

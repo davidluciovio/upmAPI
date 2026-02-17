@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Dtos.ProductionControl
+namespace Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert
 {
     public class ProductionControlComponentAlertsRequest
     {

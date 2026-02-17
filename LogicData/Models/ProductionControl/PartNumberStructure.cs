@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entity.Models.ProductionControl
 {
-    public class PartNumberEstructure
+    public class PartNumberStructure
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }

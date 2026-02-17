@@ -1,4 +1,4 @@
-using Entity.Dtos.ModelDtos.ProductionControl.MaterialSupplier;
+using Entity.Dtos.ModelDtos.ProductionControl.PartNumberStructure;
 using LogicDomain.ModelServices.ProductionControl;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,17 +9,17 @@ namespace UnipresSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MaterialSupplierController : ControllerBase
+    public class PartNumberStructureController : ControllerBase
     {
-        private readonly MaterialSupplierService _service;
+        private readonly PartNumberStructureService _service;
 
-        public MaterialSupplierController(MaterialSupplierService service)
+        public PartNumberStructureController(PartNumberStructureService service)
         {
             _service = service;
         }
 
         [HttpGet("v1/get-all")]
-        public async Task<IActionResult> GetAllSuppliers()
+        public async Task<IActionResult> GetAllPartNumberStructures()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpGet("v1/get-by-id/{id}")]
-        public async Task<IActionResult> GetSupplierById(Guid id)
+        public async Task<IActionResult> GetPartNumberStructureById(Guid id)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/create")]
-        public async Task<IActionResult> CreateSupplier([FromBody] MaterialSupplierRequestDto createDto)
+        public async Task<IActionResult> CreatePartNumberStructure([FromBody] PartNumberStructureRequestDto createDto)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace UnipresSystem.Controllers
                     return BadRequest("The submitted object is null.");
                 }
                 var newItem = await _service.Create(createDto);
-                return CreatedAtAction(nameof(GetSupplierById), new { id = newItem.Id }, newItem);
+                return CreatedAtAction(nameof(GetPartNumberStructureById), new { id = newItem.Id }, newItem);
             }
             catch (InvalidOperationException ex)
             {
@@ -73,7 +73,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/update/{id}")]
-        public async Task<IActionResult> UpdateSupplier(Guid id, [FromBody] MaterialSupplierRequestDto updateDto)
+        public async Task<IActionResult> UpdatePartNumberStructure(Guid id, [FromBody] PartNumberStructureRequestDto updateDto)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpDelete("v1/delete/{id}")]
-        public async Task<IActionResult> DeleteSupplier(Guid id)
+        public async Task<IActionResult> DeletePartNumberStructure(Guid id)
         {
             try
             {

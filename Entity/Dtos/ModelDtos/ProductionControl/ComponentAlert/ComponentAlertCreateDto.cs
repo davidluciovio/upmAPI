@@ -1,6 +1,6 @@
 using System;
 
-namespace Entity.ModelDtos
+namespace Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert
 {
     public class ComponentAlertCreateDto
     {
