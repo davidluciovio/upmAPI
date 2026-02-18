@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Entity.Dtos.Auth;
+using Entity.Dtos.ProductionControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Models.ProductionControl
+namespace Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert
 {
-    public class ComponentAlert
+    public class ComponentAlertResponseDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
@@ -24,9 +26,10 @@ namespace Entity.Models.ProductionControl
         public string? CriticalBy { get; set; }
         public DateTime? CriticalDate { get; set; }
 
-        public Guid StatusId { get; set; }
-        public virtual PartNumberLogistics? PartNumberLogistics { get; set; }
+        public string StatusDescrition { get; set; } = string.Empty;
+        public PartNumberLogisticsResponseDto PartNumberLogisticsResponseDto { get; set; } = new PartNumberLogisticsResponseDto();
         public Guid PartNumberLogisticsId { get; set; }
-        public string UserId { get; set; }
-    } 
+        public Guid UserId { get; set; }
+        public AuthUserDto UserData { get; set; }
+    }
 }

@@ -28,6 +28,8 @@ using UnipresSystem.Data;
 using LogicDomain.SystemServices;
 using LogicDomain.ModelServices.ProductionControl;
 using Entity.Dtos.ModelDtos.ProductionControl.ProductionLocation;
+using Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert;
+using LogicDomain.ModelServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -200,7 +202,7 @@ builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateD
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
-builder.Services.AddScoped<IComponentAlertService, LogicDomain.ModelServices.ComponentAlertService>();
+builder.Services.AddScoped<IServiceCrud<ComponentAlertResponseDto, ComponentAlertRequestDto, ComponentAlertRequestDto>, LogicDomain.ModelServices.ComponentAlertService>();
 
 builder.Services.AddScoped<OperationalAnalysisService>();
 builder.Services.AddScoped<DowntimeCaptureService>();
@@ -232,6 +234,7 @@ using (var scope = app.Services.CreateScope())
     {
         // Ejecutamos nuestro método Seeder
         await DbSeeder.SeedRolesAndSuperAdminAsync(services);
+        await DbSeeder.SeedInitialDataAsync(services);
     }
     catch (Exception ex)
     {

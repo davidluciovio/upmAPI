@@ -1,13 +1,18 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert
 {
-    public class ComponentAlertDto
+    public class ComponentAlertRequestDto
     {
-        public Guid Id { get; set; }
         public bool Active { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; } = string.Empty;
+        public DateTime UpdateDate { get; set; }
+        public string UpdateBy { get; set; } = string.Empty;
 
         public string? CompleteBy { get; set; }
         public DateTime? CompleteDate { get; set; }
@@ -18,7 +23,7 @@ namespace Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert
         public string? CriticalBy { get; set; }
         public DateTime? CriticalDate { get; set; }
 
-        public Guid StatusId { get; set; }
         public Guid PartNumberLogisticsId { get; set; }
+
     }
 }
