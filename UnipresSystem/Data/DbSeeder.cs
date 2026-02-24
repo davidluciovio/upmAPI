@@ -59,7 +59,7 @@ namespace UnipresSystem.Data
             var context = services.GetRequiredService<DataContext>();
             var productionControlContext = services.GetRequiredService<ProductionControlContext>();
 
-            var states = new List<string> { "Crítico", "Recibido", "Completado", "Cancelado" };
+            var states = new List<string> { "CRITICAL", "RECEIVED", "COMPLETED", "CANCELLED", "CREATED" };
             
             states.ForEach(state =>
             {
@@ -68,7 +68,7 @@ namespace UnipresSystem.Data
                     context.Statuses.Add(new DataStatus
                     {
                         Id = Guid.NewGuid(),
-                        StatusDescription = state.ToUpper(),
+                        StatusDescription = state.Trim().ToUpper(),
                         Active = true,
                         CreateDate = DateTime.UtcNow,
                         CreateBy = "System"

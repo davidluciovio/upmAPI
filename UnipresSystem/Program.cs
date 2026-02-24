@@ -202,10 +202,10 @@ builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateD
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
 builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
-builder.Services.AddScoped<IServiceCrud<ComponentAlertResponseDto, ComponentAlertRequestDto, ComponentAlertRequestDto>, LogicDomain.ModelServices.ComponentAlertService>();
 
 builder.Services.AddScoped<OperationalAnalysisService>();
 builder.Services.AddScoped<DowntimeCaptureService>();
+builder.Services.AddScoped<ComponentAlertService>();
 builder.Services.AddScoped<LdapService>();
 
 builder.Services.AddScoped<PartNumberLogisticsService>();

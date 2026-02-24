@@ -34,10 +34,12 @@ namespace LogicData.Context
             {
                 entity.ToTable("PartNumberLogistics");
                 entity.HasKey(e => e.Id);
+
                 entity.HasIndex(e => e.PartNumberId);
                 entity.HasIndex(e => e.AreaId);
                 entity.HasIndex(e => e.LocationId);
 
+                entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.PartNumberId).IsRequired();
                 entity.Property(e => e.AreaId).IsRequired();
                 entity.Property(e => e.LocationId).IsRequired();
@@ -84,6 +86,7 @@ namespace LogicData.Context
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.ProductionStationId);
 
+                entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.ProductionStationId).IsRequired();
 
                 entity.Property(e => e.PartNumberName).IsRequired().HasMaxLength(250);

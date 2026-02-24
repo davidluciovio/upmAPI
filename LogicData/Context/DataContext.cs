@@ -56,6 +56,7 @@ namespace LogicData.Context
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.LocationDescription).IsUnique();
 
+                entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.LocationDescription).IsRequired().HasMaxLength(200);
             });
 

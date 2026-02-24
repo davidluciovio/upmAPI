@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace LogicDomain.ModelServices
 {
-    public class ComponentAlertService : IServiceCrud<ComponentAlertResponseDto, ComponentAlertRequestDto, ComponentAlertRequestDto>
+    public class ComponentAlertServiceold : IServiceCrud<ComponentAlertResponseDto, ComponentAlertRequestDto, ComponentAlertRequestDto>
     {
         private readonly ProductionControlContext _context;
         private readonly DataContext _contextData;
 
-        public ComponentAlertService(ProductionControlContext context, DataContext contextData)
+        public ComponentAlertServiceold(ProductionControlContext context, DataContext contextData)
         {
             _context = context;
             _contextData = contextData;
