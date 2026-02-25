@@ -146,8 +146,25 @@ namespace LogicDomain.ApplicationServices
             };
         }
 
-        public async Task<List<ComponentAlertResponseDto>> GetAllComponentAlerts()
+        public async Task<List<ComponentAlertResponseDto>> GetAllComponentAlerts(ComponentAlertFiltersDto filters)
         {
+            var componentAlerts = _productionControlContext.ComponentAlerts
+                .Include(ca => ca.PartNumberLogistics);
+
+            if (filters.AreaId != null)
+            {
+                componentAlerts.Where(ca => ca.PartNumberLogistics.AreaId == filters.AreaId);
+            }
+
+            if (filters.PartNumberLogisticId != null) {
+                componentAlerts.Where(ca => ca.PartNumberLogisticsId == filters.PartNumberLogisticId);
+            }
+
+            if(filters.UserId != null)
+            {
+                componentAlerts.Where(ca => ca.UserId == filters.UserId);
+            }
+
 
             var partNumbers = await _dataContext.ProductionPartNumbers.ToDictionaryAsync(p => p.Id, p => p);
             var areas = await _dataContext.ProductionAreas.ToDictionaryAsync(a => a.Id, a => a); 
@@ -156,9 +173,9 @@ namespace LogicDomain.ApplicationServices
             var users = await _authContext.Users.ToDictionaryAsync(u => u.Id, u => u);
 
 
-            var componentAlerts = await _productionControlContext.ComponentAlerts
-                .Include(ca => ca.PartNumberLogistics)
-                .Where(ca => ca.Active)
+
+            var result = await componentAlerts.Include(ca => ca.PartNumberLogistics)
+                .Where(ca => ca.Active && ca.CreateDate >= filters.startDate && ca.CreateDate <= filters.endDate)
                 .Select(ca => new ComponentAlertResponseDto
                 {
                     Id = ca.Id,
@@ -191,7 +208,8 @@ namespace LogicDomain.ApplicationServices
                     User = users[ca.UserId].PrettyName
                 })
                 .ToListAsync();
-            return componentAlerts;
+
+            return result;
         }
     }
 }

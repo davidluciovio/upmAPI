@@ -28,7 +28,6 @@ using UnipresSystem.Data;
 using LogicDomain.SystemServices;
 using LogicDomain.ModelServices.ProductionControl;
 using Entity.Dtos.ModelDtos.ProductionControl.ProductionLocation;
-using Entity.Dtos.ModelDtos.ProductionControl.ComponentAlert;
 using LogicDomain.ModelServices;
 
 var builder = WebApplication.CreateBuilder(args);

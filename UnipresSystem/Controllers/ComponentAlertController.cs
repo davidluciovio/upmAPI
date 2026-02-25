@@ -18,12 +18,12 @@ namespace UnipresSystem.Controllers
             _componentAlertService = componentAlertService;
         }
 
-        [HttpGet("v1/get-all")]
-        public async Task<IActionResult> GetAllComponentAlerts()
+        [HttpPost("v1/get-all")]
+        public async Task<IActionResult> GetAllComponentAlerts([FromBody] ComponentAlertFiltersDto filters)
         {
             try
             {
-                var componentAlerts = await _componentAlertService.GetAllComponentAlerts();
+                var componentAlerts = await _componentAlertService.GetAllComponentAlerts(filters);
                 return Ok(componentAlerts);
             }
             catch (Exception ex)
