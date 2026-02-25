@@ -135,7 +135,7 @@ namespace LogicDomain.ApplicationServices
 
                             // Lógica de tiempo de trabajo (Mínimo 0 para evitar negativos)
                             float totalWorkingTime = prInInterval.Count > 1
-                                ? (float)(prInInterval.Max(pr => pr.CreateDate) - interval.Start).TotalMinutes - downtimeNP
+                                ? (float)(prInInterval.Max(pr => pr.CreateDate) - prInInterval.Min(pr => pr.CreateDate)).TotalMinutes - downtimeNP
                                 : 0f ;
 
                             float minutesPzas = producedQty > 0 ? totalWorkingTime / producedQty : 0f;
@@ -153,7 +153,8 @@ namespace LogicDomain.ApplicationServices
                                 MinutesPzas = minutesPzas,
                                 ProducedQuantity = producedQty,
                                 ObjetiveQuantity = (int)objQty,
-                                Efectivity = efficiency
+                                Efectivity = efficiency,
+                                LastDatetimeProduction = prInInterval.Any() ? prInInterval.Max(pr => pr.CreateDate) : interval.Start,
                             };
                         }).ToList(),
                         Operators = stationOperators, // Populate new Operators list
@@ -198,16 +199,16 @@ namespace LogicDomain.ApplicationServices
             await _contextAssy.SaveChangesAsync();
         }
 
-        public async Task RegisterLineOperators(LineOperatorsRegisterDto dto)
+        public async Task RegisterLineOperators(LineOperatorsRegisterRequestDto dto)
         {
             var lineOperatorsRegister = new LineOperatorsRegister
             {
                 Id = Guid.NewGuid(),
                 Active = true,
                 CreateDate = DateTime.UtcNow,
-                CreateBy = "System", // Placeholder for now
+                CreateBy = dto.CreateBy, // Placeholder for now
                 UpdateDate = DateTime.UtcNow,
-                UpdateBy = "System", // Placeholder for now
+                UpdateBy = "", // Placeholder for now
                 LineId = dto.LineId,
                 OperatorCode = dto.OperatorCode,
                 OperatorName = dto.OperatorName,
@@ -241,7 +242,18 @@ namespace LogicDomain.ApplicationServices
 
         public async Task<List<DataActiveEmployees>> GetActiveEmployees(string request)
         {
-            return await _contextData.ActiveEmployees.Where(e => e.PRETTYNAME.Contains(request) || e.CB_CODIGO.ToString().Contains(request)).ToListAsync();
+            return await _contextData.ActiveEmployees
+                .Select(e => new DataActiveEmployees
+                {
+                    CB_APE_MAT = e.CB_APE_MAT,
+                    CB_APE_PAT = e.CB_APE_PAT,
+                    CB_CODIGO = e.CB_CODIGO,
+                    CB_NOMBRES = e.CB_NOMBRES,
+                    PRETTYNAME = e.CB_CODIGO.ToString() + " - "  + e.PRETTYNAME,
+                    IM_BLOB = e.IM_BLOB
+                })
+                .Where(e => e.PRETTYNAME.Contains(request))
+                .ToListAsync();
         }
     
     }

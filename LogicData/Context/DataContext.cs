@@ -117,6 +117,7 @@ namespace LogicData.Context
                 entity.Property(e => e.CB_APE_MAT).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CB_APE_PAT).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.PRETTYNAME).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.IM_BLOB).IsRequired();
 
             });
         }

@@ -22,6 +22,7 @@ namespace UnipresSystem.Controllers
             var result = await _downtimeCaptureService.GetDowntimeCaptureData(request);
             return Ok(result);
         }
+
         [HttpGet("v1/get-active-employees")]
         public async Task<IActionResult> GetActiveEmployees([FromQuery] string req)
         {
@@ -43,10 +44,17 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/register-line-operators")]
-        public async Task<IActionResult> RegisterLineOperators([FromBody] LineOperatorsRegisterDto dto)
+        public async Task<IActionResult> RegisterLineOperators([FromBody] LineOperatorsRegisterRequestDto dto)
         {
-            await _downtimeCaptureService.RegisterLineOperators(dto);
-            return Ok("Line Operators registered successfully.");
+            try
+            {
+                await _downtimeCaptureService.RegisterLineOperators(dto);
+                return Ok("Line Operators registered successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message} - {ex.InnerException?.Message}");
+            }
         }
 
         [HttpPost("v1/register-downtime")]

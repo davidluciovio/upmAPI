@@ -13,5 +13,6 @@ namespace Entity.Models.DataUPM
         public string CB_APE_MAT { get; set; }
         public string CB_APE_PAT { get; set; }
         public string PRETTYNAME { get; set; }
+        public Byte[] IM_BLOB { get; set; }
     }
 }

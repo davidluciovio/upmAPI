@@ -40,6 +40,7 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
                 public float ProducedQuantity { get; set; }
                 public float ObjetiveQuantity { get; set; }
                 public float Efectivity { get; set; }
+                public DateTime? LastDatetimeProduction { get; set; }
 
             }
 
@@ -61,6 +62,13 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
                 public Guid ProductionStationId { get; set; }
                 public string DowntimeReason { get; set; } = string.Empty; // Adding a placeholder for reason
             }
+        }
+
+        public class LineOperatorsRegisterDto
+        {
+            public Guid Id { get; set; }
+            public string OperatorCode { get; set; } = string.Empty;
+            public string OperatorName { get; set; } = string.Empty;
         }
     }
 }
