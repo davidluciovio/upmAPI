@@ -2,7 +2,7 @@ using System;
 
 namespace Entity.Dtos.AplicationDtos.DowntimeCapture
 {
-    public class DowntimeRegisterDto
+    public class DowntimeRegisterRequestDto
     {
         public DateTime StartDowntimeDatetime { get; set; }
         public DateTime EndDowntimeDatetime { get; set; }

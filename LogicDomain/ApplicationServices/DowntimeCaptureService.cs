@@ -16,6 +16,99 @@ namespace LogicDomain.ApplicationServices
             _contextAssy = contextAssy;
             _contextData = contextData;
         }
+        
+        public async Task RegisterCompleteRack(CompleteRackRegisterDto dto)
+        {
+            var completeRackRegister = new CompleteRackRegister
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                CreateDate = DateTime.UtcNow,
+                CreateBy = "System", // Placeholder for now
+                UpdateDate = DateTime.UtcNow,
+                UpdateBy = "System", // Placeholder for now
+                NoRack = dto.NoRack,
+                Serie = dto.Serie,
+                Destination = dto.Destination,
+                ProductionStationId = dto.ProductionStationId
+            };
+
+            _contextAssy.CompleteRackRegisters.Add(completeRackRegister);
+            await _contextAssy.SaveChangesAsync();
+        }
+
+        public async Task RegisterLineOperators(LineOperatorsRegisterRequestDto dto)
+        {
+            var lineOperatorsRegister = new LineOperatorsRegister
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                CreateDate = DateTime.UtcNow,
+                CreateBy = dto.CreateBy, // Placeholder for now
+                UpdateDate = DateTime.UtcNow,
+                UpdateBy = "", // Placeholder for now
+                LineId = dto.LineId,
+                OperatorCode = dto.OperatorCode,
+                OperatorName = dto.OperatorName,
+                StartDatetime = dto.StartDatetime,
+                EndDatetime = dto.EndDatetime,
+                Complete = false
+            };
+
+            _contextAssy.LineOperatorsRegisters.Add(lineOperatorsRegister);
+            await _contextAssy.SaveChangesAsync();
+        }
+
+        public async Task RegisterDowntime(DowntimeRegisterRequestDto dto)
+        {
+            var downtimeRegister = new DowntimeRegister
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                CreateDate = DateTime.UtcNow,
+                CreateBy = "System", // Placeholder for now
+                UpdateDate = DateTime.UtcNow,
+                UpdateBy = "System", // Placeholder for now
+                StartDowntimeDatetime = dto.StartDowntimeDatetime,
+                EndDowntimeDatetime = dto.EndDowntimeDatetime,
+                DataProductionDowntimeId = dto.DataProductionDowntimeId,
+                ProductionStationId = dto.ProductionStationId
+            };
+
+            _contextAssy.DowntimeRegisters.Add(downtimeRegister);
+            await _contextAssy.SaveChangesAsync();
+        }
+
+
+        public async Task<List<LineOperatorsRegisterResponseDto>> GetLineOperatorsRegisters(LineOperatorsRegisterRequestDto request)
+        {
+            return _contextAssy.LineOperatorsRegisters
+                .Where(or => or.StartDatetime >= request.StartDatetime && or.EndDatetime <= request.EndDatetime && or.LineId == request.LineId && or.Complete == false)
+                .Select(or => new LineOperatorsRegisterResponseDto
+                {
+                    Id = or.Id,
+                    OperatorCode = or.OperatorCode,
+                    OperatorName = or.OperatorName,
+                    StartDatetime = or.StartDatetime,
+                    EndDatetime = or.EndDatetime
+                }).ToList();
+        }
+
+        public async Task<List<DataActiveEmployees>> GetActiveEmployees(string request)
+        {
+            return await _contextData.ActiveEmployees
+                .Select(e => new DataActiveEmployees
+                {
+                    CB_APE_MAT = e.CB_APE_MAT,
+                    CB_APE_PAT = e.CB_APE_PAT,
+                    CB_CODIGO = e.CB_CODIGO,
+                    CB_NOMBRES = e.CB_NOMBRES,
+                    PRETTYNAME = e.CB_CODIGO.ToString() + " - "  + e.PRETTYNAME,
+                    IM_BLOB = e.IM_BLOB
+                })
+                .Where(e => e.PRETTYNAME.Contains(request))
+                .ToListAsync();
+        }
 
         public async Task<DowntimeCaptureResponseDto> GetDowntimeCaptureData(DowntimeCaptureRequestDto request)
         {
@@ -138,8 +231,10 @@ namespace LogicDomain.ApplicationServices
                                 ? (float)(prInInterval.Max(pr => pr.CreateDate) - prInInterval.Min(pr => pr.CreateDate)).TotalMinutes - downtimeNP
                                 : 0f ;
 
+                            if(totalWorkingTime < 0) totalWorkingTime = 0;
+
                             float minutesPzas = producedQty > 0 ? totalWorkingTime / producedQty : 0f;
-                            float objQty = ps.NetoTime > 0 ? (totalWorkingTime / (float)ps.NetoTime) : 0f;
+                            float objQty = ps.NetoTime > 0 && totalWorkingTime > 0 ? (totalWorkingTime / (float)ps.NetoTime) : 0f;
                             float efficiency = (minutesPzas > 0) ? ((float)ps.NetoTime / minutesPzas) : 0f;
 
                             return new DowntimeCaptureResponseDto.PartNumberDataProduction.HourlyProductionData
@@ -179,81 +274,26 @@ namespace LogicDomain.ApplicationServices
                 partNumberDataProductions = partNumberProductionsWithOutput
             };
         }
-        public async Task RegisterCompleteRack(CompleteRackRegisterDto dto)
-        {
-            var completeRackRegister = new CompleteRackRegister
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                CreateDate = DateTime.UtcNow,
-                CreateBy = "System", // Placeholder for now
-                UpdateDate = DateTime.UtcNow,
-                UpdateBy = "System", // Placeholder for now
-                NoRack = dto.NoRack,
-                Serie = dto.Serie,
-                Destination = dto.Destination,
-                ProductionStationId = dto.ProductionStationId
-            };
 
-            _contextAssy.CompleteRackRegisters.Add(completeRackRegister);
+
+        public async Task PutLineOperatorRegisters(Guid id, LineOperatorsRegisterRequestDto request)
+        {
+            var existingRegister = await _contextAssy.LineOperatorsRegisters.FindAsync(id);
+
+            if (existingRegister == null) throw new Exception("Line Operator Register not found");
+
+            existingRegister.OperatorCode = request.OperatorCode;
+            existingRegister.OperatorName = request.OperatorName;
+            existingRegister.StartDatetime = request.StartDatetime;
+            existingRegister.EndDatetime = request.EndDatetime;
+            existingRegister.UpdateDate = DateTime.UtcNow;
+            existingRegister.UpdateBy = request.UpdateBy; // Placeholder for now
+            existingRegister.UpdateDate = DateTime.UtcNow;
+            existingRegister.UpdateBy = request.UpdateBy; // Placeholder for now
+            existingRegister.Complete = request.Complete;
+
+            _contextAssy.LineOperatorsRegisters.Update(existingRegister);
             await _contextAssy.SaveChangesAsync();
-        }
-
-        public async Task RegisterLineOperators(LineOperatorsRegisterRequestDto dto)
-        {
-            var lineOperatorsRegister = new LineOperatorsRegister
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                CreateDate = DateTime.UtcNow,
-                CreateBy = dto.CreateBy, // Placeholder for now
-                UpdateDate = DateTime.UtcNow,
-                UpdateBy = "", // Placeholder for now
-                LineId = dto.LineId,
-                OperatorCode = dto.OperatorCode,
-                OperatorName = dto.OperatorName,
-                StartDatetime = dto.StartDatetime,
-                EndDatetime = dto.EndDatetime
-            };
-
-            _contextAssy.LineOperatorsRegisters.Add(lineOperatorsRegister);
-            await _contextAssy.SaveChangesAsync();
-        }
-
-        public async Task RegisterDowntime(DowntimeRegisterDto dto)
-        {
-            var downtimeRegister = new DowntimeRegister
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                CreateDate = DateTime.UtcNow,
-                CreateBy = "System", // Placeholder for now
-                UpdateDate = DateTime.UtcNow,
-                UpdateBy = "System", // Placeholder for now
-                StartDowntimeDatetime = dto.StartDowntimeDatetime,
-                EndDowntimeDatetime = dto.EndDowntimeDatetime,
-                DataProductionDowntimeId = dto.DataProductionDowntimeId,
-                ProductionStationId = dto.ProductionStationId
-            };
-
-            _contextAssy.DowntimeRegisters.Add(downtimeRegister);
-            await _contextAssy.SaveChangesAsync();
-        }
-
-        public async Task<List<DataActiveEmployees>> GetActiveEmployees(string request)
-        {
-            return await _contextData.ActiveEmployees
-                .Select(e => new DataActiveEmployees
-                {
-                    CB_APE_MAT = e.CB_APE_MAT,
-                    CB_APE_PAT = e.CB_APE_PAT,
-                    CB_CODIGO = e.CB_CODIGO,
-                    CB_NOMBRES = e.CB_NOMBRES,
-                    PRETTYNAME = e.CB_CODIGO.ToString() + " - "  + e.PRETTYNAME,
-                    IM_BLOB = e.IM_BLOB
-                })
-                .Where(e => e.PRETTYNAME.Contains(request))
-                .ToListAsync();
         }
     
     }

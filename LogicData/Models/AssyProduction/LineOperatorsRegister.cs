@@ -22,6 +22,7 @@ namespace Entity.Models.AssyProduction
         public DateTime StartDatetime { get; set; }
         public DateTime EndDatetime { get; set; }
 
+        public bool? Complete { get; set; }
 
     }
 }
