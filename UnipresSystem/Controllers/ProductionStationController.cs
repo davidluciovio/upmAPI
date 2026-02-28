@@ -10,9 +10,9 @@ namespace UnipresSystem.Controllers
     [Route("api/[controller]")]
     public class ProductionStationController : ControllerBase
     {
-        private readonly IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> _productionStationService;
+        private readonly IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto> _productionStationService;
 
-        public ProductionStationController(IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> productionStationService)
+        public ProductionStationController(IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto> productionStationService)
         {
             _productionStationService = productionStationService;
         }
@@ -21,7 +21,7 @@ namespace UnipresSystem.Controllers
         public async Task<IActionResult> GetAllProductionStations()
         {
             try
-            {
+            {   
                 var productionStations = await _productionStationService.GetAlls();
                 return Ok(productionStations);
             }

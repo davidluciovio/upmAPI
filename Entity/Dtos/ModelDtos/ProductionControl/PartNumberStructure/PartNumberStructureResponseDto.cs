@@ -13,7 +13,7 @@ namespace Entity.Dtos.ModelDtos.ProductionControl.PartNumberStructure
 
         public Guid ProductionStationId { get; set; }
 
-        public ProductionStationDto ProductionStation { get; set; } = new ProductionStationDto();
+        public ProductionStationResponseDto ProductionStation { get; set; } = new ProductionStationResponseDto();
         public string PartNumberDescription { get; set; } = string.Empty;
 
         public Guid PartNumberLogisticId { get; set; }

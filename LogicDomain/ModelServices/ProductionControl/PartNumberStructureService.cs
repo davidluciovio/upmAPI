@@ -20,13 +20,13 @@ namespace LogicDomain.ModelServices.ProductionControl
         private readonly AssyProductionContext _contextAssyProduction;
         private readonly MaterialSupplierService _materialSupplierService;
         private readonly PartNumberLogisticsService _partNumberLogisticsService;
-        private readonly IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> _productionStationService;
+        private readonly IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto> _productionStationService;
 
         public PartNumberStructureService(
             ProductionControlContext context,
             MaterialSupplierService materialSupplierService,
             PartNumberLogisticsService partNumberLogisticsService,
-            IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto> productionStationService)
+            IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto> productionStationService)
         {
             _contextProductionControl = context;
             _materialSupplierService = materialSupplierService;

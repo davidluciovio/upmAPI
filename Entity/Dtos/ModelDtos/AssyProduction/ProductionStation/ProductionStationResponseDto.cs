@@ -2,7 +2,7 @@ using System;
 
 namespace Entity.Dtos.AssyProduction
 {
-    public class ProductionStationDto
+    public class ProductionStationResponseDto
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }

@@ -14,6 +14,7 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
 
         public class PartNumberDataProduction
         {
+            public Guid ProductionStationId { get; set; }
             public Guid PartNumberId { get; set; }
             public string PartNumberName { get; set; } = string.Empty;
             public string PartNumberDescription { get; set; } = string.Empty;

@@ -199,7 +199,7 @@ builder.Services.AddScoped<IServiceRoleClaim<DataSecurityRoleClaimResponseDto, D
 
 builder.Services.AddScoped<IServiceCrud<ProductionLineDto, ProductionLineCreateDto, ProductionLineUpdateDto>, DataProductionLineService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLocationDto, PartNumberLocationCreateDto, PartNumberLocationUpdateDto>, PartNumberLocationService>();
-builder.Services.AddScoped<IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
+builder.Services.AddScoped<IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto>, ProductionStationService>();
 builder.Services.AddScoped<IServiceCrud<PartNumberLogisticsResponseDto, PartNumberLogisticsCreateDto, PartNumberLogisticsUpdateDto>, PartNumberLogisticsService>();
 
 builder.Services.AddScoped<OperationalAnalysisService>();

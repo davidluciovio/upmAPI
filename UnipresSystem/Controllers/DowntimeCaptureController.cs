@@ -81,10 +81,46 @@ namespace UnipresSystem.Controllers
         }
 
         [HttpPost("v1/register-downtime")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SetDowntime([FromBody] DowntimeRegisterRequestDto dto)
         {
-            await _downtimeCaptureService.RegisterDowntime(dto);
-            return Ok("Downtime registered successfully.");
+            // 1. Validación básica de nulidad
+            if (dto == null)
+            {
+                return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
+            }
+
+            // 2. Validación automática de DataAnnotations (si usas [Required], [Range], etc. en el DTO)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _downtimeCaptureService.RegisterDowntime(dto);
+
+                // 3. Respuesta semántica: 201 Created es mejor que 200 Ok para creaciones
+                return StatusCode(StatusCodes.Status201Created, new { message = "Downtime registered successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                // Errores de lógica de negocio (ej. fechas inválidas)
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Error cuando no existe el ID de la estación o downtime
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // 4. Loggear el error aquí (p. ej. _logger.LogError(ex, "Error..."))
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { error = "Ocurrió un error interno al procesar el registro." });
+            }
         }
 
 

@@ -12,7 +12,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace LogicDomain.AssyProduction
 {
-    public class ProductionStationService : IServiceCrud<ProductionStationDto, ProductionStationCreateDto, ProductionStationUpdateDto>
+    public class ProductionStationService : IServiceCrud<ProductionStationResponseDto, ProductionStationCreateDto, ProductionStationUpdateDto>
     {
         private readonly AssyProductionContext _assyProductionContext;
         private readonly DataContext _dataContext;
@@ -23,7 +23,7 @@ namespace LogicDomain.AssyProduction
             _dataContext = dataContext;
         }
 
-        public async Task<ProductionStationDto> Create(ProductionStationCreateDto createDto)
+        public async Task<ProductionStationResponseDto> Create(ProductionStationCreateDto createDto)
         {
             var station = new ProductionStation
             {
@@ -43,7 +43,7 @@ namespace LogicDomain.AssyProduction
             _assyProductionContext.ProductionStations.Add(station);
             await _assyProductionContext.SaveChangesAsync();
 
-            return new ProductionStationDto
+            return new ProductionStationResponseDto
             {
                 Active = station.Active,
                 CreateBy = station.CreateBy,
@@ -61,7 +61,7 @@ namespace LogicDomain.AssyProduction
             };
         }
 
-        public async Task<List<ProductionStationDto>> GetAlls()
+        public async Task<List<ProductionStationResponseDto>> GetAlls()
         {
             // 1. Traer todas las estaciones (Usamos AsNoTracking para mayor velocidad de lectura)
             var stations = await _assyProductionContext.ProductionStations
@@ -88,7 +88,7 @@ namespace LogicDomain.AssyProduction
                 .ToDictionaryAsync(k => k.Id, v => v.ModelDescription);
 
             // 4. Mapear los datos en memoria (esto es extremadamente rápido)
-            var result = stations.Select(s => new ProductionStationDto
+            var result = stations.Select(s => new ProductionStationResponseDto
             {
                 Active = s.Active,
                 CreateBy = s.CreateBy,
@@ -116,7 +116,7 @@ namespace LogicDomain.AssyProduction
             return result;
         }
 
-        public async Task<ProductionStationDto?> GetById(Guid id)
+        public async Task<ProductionStationResponseDto?> GetById(Guid id)
         {
             var station = await _assyProductionContext.ProductionStations.FindAsync(id);
             if (station == null)
@@ -124,7 +124,7 @@ namespace LogicDomain.AssyProduction
                 throw new KeyNotFoundException("ProductionStation not found");
             }
 
-            return new ProductionStationDto
+            return new ProductionStationResponseDto
             {
                 Active = station.Active,
                 CreateBy = station.CreateBy,
@@ -142,7 +142,7 @@ namespace LogicDomain.AssyProduction
             };
         }
 
-        public async Task<ProductionStationDto> Update(Guid id, ProductionStationUpdateDto updateDto)
+        public async Task<ProductionStationResponseDto> Update(Guid id, ProductionStationUpdateDto updateDto)
         {
             var station = await _assyProductionContext.ProductionStations.FindAsync(id);
             if (station == null) throw new KeyNotFoundException("ProductionStation not found");
@@ -170,7 +170,7 @@ namespace LogicDomain.AssyProduction
             _assyProductionContext.ProductionStations.Update(station);
             await _assyProductionContext.SaveChangesAsync();
 
-            return new ProductionStationDto
+            return new ProductionStationResponseDto
             {
                 Active = station.Active,
                 CreateBy = station.CreateBy,

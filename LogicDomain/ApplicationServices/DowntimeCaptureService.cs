@@ -3,7 +3,8 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using LogicData.Models.AssyProduction; // Added for CompleteRackRegister
 using Entity.Models.AssyProduction;
-using Entity.Models.DataUPM; // Added for LineOperatorsRegister and DowntimeRegister
+using Entity.Models.DataUPM;
+using Entity.Dtos.AssyProduction; // Added for LineOperatorsRegister and DowntimeRegister
 
 namespace LogicDomain.ApplicationServices
 {
@@ -61,22 +62,52 @@ namespace LogicDomain.ApplicationServices
 
         public async Task RegisterDowntime(DowntimeRegisterRequestDto dto)
         {
+            // 1. Validaciones de Lógica de Negocio
+            if (dto.StartDowntimeDatetime >= dto.EndDowntimeDatetime)
+            {
+                throw new ArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
+            }
+
+            if (dto.StartDowntimeDatetime > DateTime.UtcNow)
+            {
+                throw new ArgumentException("No se puede registrar un tiempo de inactividad en el futuro.");
+            }
+
+            // 2. Validaciones de Integridad (Opcional pero recomendado)
+            // Verificamos que los IDs relacionados existan en la base de datos
+            var stationExists = await _contextAssy.ProductionStations
+                .AnyAsync(s => s.Id == dto.ProductionStationId);
+
+            if (!stationExists)
+            {
+                throw new KeyNotFoundException($"La estación de producción con ID {dto.ProductionStationId} no existe.");
+            }
+
+            // 3. Mapeo y Creación
             var downtimeRegister = new DowntimeRegister
             {
                 Id = Guid.NewGuid(),
                 Active = true,
                 CreateDate = DateTime.UtcNow,
-                CreateBy = "System", // Placeholder for now
+                CreateBy = dto.CreateBy,
                 UpdateDate = DateTime.UtcNow,
-                UpdateBy = "System", // Placeholder for now
+                UpdateBy = dto.UpdateBy,
                 StartDowntimeDatetime = dto.StartDowntimeDatetime,
                 EndDowntimeDatetime = dto.EndDowntimeDatetime,
                 DataProductionDowntimeId = dto.DataProductionDowntimeId,
                 ProductionStationId = dto.ProductionStationId
             };
 
-            _contextAssy.DowntimeRegisters.Add(downtimeRegister);
-            await _contextAssy.SaveChangesAsync();
+            try
+            {
+                _contextAssy.DowntimeRegisters.Add(downtimeRegister);
+                await _contextAssy.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Captura errores de base de datos (ej. violaciones de FK o triggers)
+                throw new Exception("Error al persistir el registro de inactividad.", ex);
+            }
         }
 
 
@@ -203,6 +234,7 @@ namespace LogicDomain.ApplicationServices
 
                     return new DowntimeCaptureResponseDto.PartNumberDataProduction
                     {
+                        ProductionStationId = ps.Id,
                         PartNumberId = ps.PartNumberId,
                         PartNumberName = partInfo?.PartNumberName ?? "N/A",
                         PartNumberDescription = partInfo?.PartNumberDescription ?? "N/A",
@@ -273,6 +305,11 @@ namespace LogicDomain.ApplicationServices
                 LineId = responseDowntimeCaptureResponse.LineId,
                 partNumberDataProductions = partNumberProductionsWithOutput
             };
+        }
+
+        public async Task<ProductionStationResponseDto> GetProductionStationbyPartNumber(string partnumber)
+        {
+
         }
 
 
