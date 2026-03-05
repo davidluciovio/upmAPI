@@ -15,5 +15,7 @@ namespace Entity.Dtos.AplicationDtos.DowntimeCapture
 
         public Guid ProductionStationId { get; set; }
 
+        public List<LineOperatorsRegisterRequestDto> Responsables { get; set; } = new List<LineOperatorsRegisterRequestDto>();
+
     }
 }

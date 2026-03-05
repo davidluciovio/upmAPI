@@ -52,7 +52,7 @@ namespace UnipresSystem.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message} - {ex.InnerException?.Message}");
+                return StatusCode(500, $"An error occurred: {ex.Message} - {ex.InnerException ?.Message}");
             }
         }
 
@@ -86,6 +86,9 @@ namespace UnipresSystem.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SetDowntime([FromBody] DowntimeRegisterRequestDto dto)
         {
+            dto.StartDowntimeDatetime = dto.StartDowntimeDatetime.ToLocalTime();
+            dto.EndDowntimeDatetime = dto.EndDowntimeDatetime.ToLocalTime();
+
             // 1. Validación básica de nulidad
             if (dto == null)
             {

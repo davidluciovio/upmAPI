@@ -25,6 +25,7 @@ namespace LogicData.Context
         public DbSet<ProductionStation> ProductionStations { get; set; }
         public DbSet<ProductionRegister> ProductionRegisters { get; set; }
         public DbSet<DowntimeRegister> DowntimeRegisters { get; set; }
+        public DbSet<DowntimeResponsableRegister> DowntimeResponsableRegisters { get; set; }
         public DbSet<LineOperatorsRegister> LineOperatorsRegisters { get; set; }
         public DbSet<CompleteRackRegister> CompleteRackRegisters { get; set; }
 
@@ -85,6 +86,14 @@ namespace LogicData.Context
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            builder.Entity<DowntimeResponsableRegister>(entity =>
+            {
+                entity.ToTable("DowntimeResponsableRegister");
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.DowntimeRegister).WithMany(i => i.Responsables).HasForeignKey(e => e.DowntimeRegisterId);
+
+            });
         }
     }
 }

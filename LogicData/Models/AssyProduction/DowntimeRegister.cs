@@ -22,6 +22,7 @@ namespace Entity.Models.AssyProduction
 
         public Guid ProductionStationId { get; set; }
 
-        public virtual ProductionStation ProductionStation { get; set; } = new ProductionStation();
+        public virtual ProductionStation? ProductionStation { get; set; }
+        public virtual List<DowntimeResponsableRegister> Responsables { get; set; } = new List<DowntimeResponsableRegister>();
     }
 }

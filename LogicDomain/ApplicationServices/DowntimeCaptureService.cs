@@ -44,9 +44,9 @@ namespace LogicDomain.ApplicationServices
             {
                 Id = Guid.NewGuid(),
                 Active = true,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreateBy = dto.CreateBy, // Placeholder for now
-                UpdateDate = DateTime.UtcNow,
+                UpdateDate = DateTime.Now,
                 UpdateBy = "", // Placeholder for now
                 LineId = dto.LineId,
                 OperatorCode = dto.OperatorCode,
@@ -68,7 +68,7 @@ namespace LogicDomain.ApplicationServices
                 throw new ArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
             }
 
-            if (dto.StartDowntimeDatetime > DateTime.UtcNow)
+            if (dto.StartDowntimeDatetime > DateTime.Now)
             {
                 throw new ArgumentException("No se puede registrar un tiempo de inactividad en el futuro.");
             }
@@ -88,19 +88,34 @@ namespace LogicDomain.ApplicationServices
             {
                 Id = Guid.NewGuid(),
                 Active = true,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreateBy = dto.CreateBy,
-                UpdateDate = DateTime.UtcNow,
+                UpdateDate = DateTime.Now,
                 UpdateBy = dto.UpdateBy,
                 StartDowntimeDatetime = dto.StartDowntimeDatetime,
                 EndDowntimeDatetime = dto.EndDowntimeDatetime,
                 DataProductionDowntimeId = dto.DataProductionDowntimeId,
-                ProductionStationId = dto.ProductionStationId
+                ProductionStationId = dto.ProductionStationId,
             };
 
             try
             {
-                _contextAssy.DowntimeRegisters.Add(downtimeRegister);
+                var newDowntimeRegister = _contextAssy.DowntimeRegisters.Add(downtimeRegister);
+
+                List<DowntimeResponsableRegister> responsables = dto.Responsables.Select(r => new DowntimeResponsableRegister
+                {
+                    Id = Guid.NewGuid(),
+                    Active = true,
+                    CreateDate = DateTime.Now,
+                    CreateBy = dto.CreateBy,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = dto.UpdateBy,
+                    OperatorCode = r.OperatorCode,
+                    OperatorName = r.OperatorName,
+                    DowntimeRegisterId = newDowntimeRegister.Entity.Id
+                }).ToList();
+
+                await _contextAssy.DowntimeResponsableRegisters.AddRangeAsync(responsables);
                 await _contextAssy.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -306,12 +321,6 @@ namespace LogicDomain.ApplicationServices
                 partNumberDataProductions = partNumberProductionsWithOutput
             };
         }
-
-        public async Task<ProductionStationResponseDto> GetProductionStationbyPartNumber(string partnumber)
-        {
-
-        }
-
 
         public async Task PutLineOperatorRegisters(Guid id, LineOperatorsRegisterRequestDto request)
         {
