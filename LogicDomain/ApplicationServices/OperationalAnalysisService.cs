@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos.AplicationDtos.OperationalAnalysis;
+using Entity.Models._05_Temporal;
 using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -73,6 +74,26 @@ namespace LogicDomain.ApplicationServices
             // ---------------------------------------------------------
             var query = _temporalContext.OperationalEfficiencies
                 .Where(data => data.ProductionDate >= request.StartDate && data.ProductionDate <= request.EndDate)
+                .Select(x => new OperationalEfficiency
+                {
+                    CreateBy = x.CreateBy,
+                    CreateDate = x.CreateDate,
+                    Active = x.Active,
+                    Area = x.Area,
+                    Id = x.Id,
+                    Jefe = x.Jefe,
+                    Leader = x.Leader,
+                    Managment = x.Managment,
+                    Supervisor = x.Supervisor,
+                    HP = x.HP,
+                    Neck = x.Neck,
+                    RealTime = x.RealTime,
+                    OperativityPercent = x.OperativityPercent >= 1 ? 1 : x.OperativityPercent,
+                    PartNumberName = x.PartNumberName,
+                    ProductionDate = x.ProductionDate,
+                    Shift = x.Shift,
+
+                })
                 .AsQueryable();
 
             // Rango de Días (para gráficas diarias)
