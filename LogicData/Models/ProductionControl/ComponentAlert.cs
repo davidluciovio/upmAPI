@@ -28,5 +28,6 @@ namespace Entity.Models.ProductionControl
         public virtual PartNumberLogistics? PartNumberLogistics { get; set; }
         public Guid PartNumberLogisticsId { get; set; }
         public string UserId { get; set; }
+        public int CriticalPercent { get; set; } 
     } 
 }

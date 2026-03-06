@@ -24,6 +24,7 @@ namespace Entity.Dtos.AplicationDtos.ComponentAlert
         public DateTime? CriticalDate { get; set; }
 
         public Guid PartNumberLogisticsId { get; set; }
-        public string UserId { get; set; } = string.Empty;
+        public int CriticalPercent { get; set; }
+
     }
 }

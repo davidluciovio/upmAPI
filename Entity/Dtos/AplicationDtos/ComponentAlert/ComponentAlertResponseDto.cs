@@ -27,5 +27,7 @@ namespace Entity.Dtos.AplicationDtos.ComponentAlert
         public string Status { get; set; } = string.Empty;
         public virtual PartNumberLogisticsResponseDto? PartNumberLogistics { get; set; }
         public string User { get; set; } = string.Empty;
+        public int CriticalPercent { get; set; }
+
     }
 }

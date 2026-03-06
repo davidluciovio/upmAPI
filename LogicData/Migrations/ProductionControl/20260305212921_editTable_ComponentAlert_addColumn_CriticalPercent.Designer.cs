@@ -4,6 +4,7 @@ using LogicData.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogicData.Migrations.ProductionControl
 {
     [DbContext(typeof(ProductionControlContext))]
-    partial class ProductionControlContextModelSnapshot : ModelSnapshot
+    [Migration("20260305212921_editTable_ComponentAlert_addColumn_CriticalPercent")]
+    partial class editTable_ComponentAlert_addColumn_CriticalPercent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -40,7 +40,6 @@ namespace LogicDomain.ApplicationServices
             existingAlert.ReceivedBy = updateDto.ReceivedBy;
             existingAlert.ReceivedDate = updateDto.ReceivedDate;
             existingAlert.PartNumberLogisticsId = updateDto.PartNumberLogisticsId;
-            existingAlert.UserId = updateDto.UserId;
 
             await _productionControlContext.SaveChangesAsync();
             return await GetComponentAlertById(existingAlert.Id);
@@ -65,7 +64,19 @@ namespace LogicDomain.ApplicationServices
                 _dataContext.Statuses.Add(createdStatus);
                 await _dataContext.SaveChangesAsync();
             }
-            
+
+            var partNumberLogistics = await _productionControlContext.PartNumberLogistics.FindAsync(createDto.PartNumberLogisticsId);
+            if (partNumberLogistics == null)
+            {
+                throw new Exception("Part Number Logistics not found.");
+            }
+
+            var forkliftUser = await _productionControlContext.ForkliftAreas.FirstOrDefaultAsync(fa => fa.DataProductionAreaId == partNumberLogistics.AreaId);
+            if (forkliftUser == null)
+            {
+                throw new Exception("Forklift user not found for the given area.");
+            }
+
             var newAlert = new Entity.Models.ProductionControl.ComponentAlert
             {
                 Active = true,
@@ -75,7 +86,7 @@ namespace LogicDomain.ApplicationServices
                 UpdateDate = DateTime.Now,
                 PartNumberLogisticsId = createDto.PartNumberLogisticsId,
                 StatusId = createdStatus.Id,
-                UserId = createDto.UserId
+                UserId = forkliftUser.UserId.ToString()
             };
             _productionControlContext.ComponentAlerts.Add(newAlert);
             await _productionControlContext.SaveChangesAsync();
